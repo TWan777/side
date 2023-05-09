@@ -1,11 +1,13 @@
 package keeper
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/ethereum/go-ethereum/common"
 	"math/big"
 	"sidechain/x/devearn/types"
 	"strconv"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 // DistributeRewards transfers the allocated rewards to the participants
@@ -80,6 +82,14 @@ func (k Keeper) SendReward(
 		cumulativeGas := sdk.NewDecFromBigInt(new(big.Int).SetUint64(gasmeter))
 		gasRatio := cumulativeGas.Quo(totalGasDec)
 		reward := gasRatio.MulInt(totalReward.Amount)
+
+		tvlRatio, tvlErr := k.TvlReward(ctx, contract)
+		if tvlErr != nil {
+			logger.Debug("could not get tvl ratio", "error", tvlErr.Error())
+		}
+		// TODO: Add TVL tracking here
+		// Create a new function which will fetch TVL according to `uside` balance
+		// Add that value to reward
 		if !reward.IsPositive() {
 			continue
 		}
@@ -104,4 +114,33 @@ func (k Keeper) SendReward(
 		}
 	}
 	return rewards, count
+}
+
+// TvlReward function calculates TVL rewards using native token balance
+// TODO: Add support for erc20 tokens value estimation
+func (k Keeper) TvlReward(ctx sdk.Context, contractAddress string) (sdk.Dec, error) {
+	// Query total supply of native token
+	totalDenomSupply, _, err := k.bankKeeper.GetPaginatedTotalSupply(ctx, &query.PageRequest{
+		Key:        nil,
+		Offset:     0,
+		Limit:      100,
+		CountTotal: false,
+		Reverse:    false,
+	})
+	if err != nil {
+		ctx.Logger().Error("get total supply err happen, err :", err)
+		return sdk.NewDec(0), err
+	}
+	denom, err := sdk.GetBaseDenom()
+	if err != nil {
+		ctx.Logger().Error("get base denom err happen, err :", err)
+		return sdk.NewDec(0), err
+	}
+
+	totalSupply := sdk.NewDecFromBigInt(new(big.Int).SetUint64(totalDenomSupply.AmountOf(denom).Uint64()))
+	bal := k.bankKeeper.GetBalance(ctx, sdk.AccAddress(contractAddress), denom)
+	balD := sdk.NewDecFromBigInt(new(big.Int).SetUint64(bal.Amount.Uint64()))
+	tvlRatio := balD.Quo(totalSupply)
+
+	return tvlRatio, nil
 }
