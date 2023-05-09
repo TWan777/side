@@ -81,15 +81,14 @@ func (k Keeper) SendReward(
 	for contract, gasmeter := range devEarnGasMeters {
 		cumulativeGas := sdk.NewDecFromBigInt(new(big.Int).SetUint64(gasmeter))
 		gasRatio := cumulativeGas.Quo(totalGasDec)
-		reward := gasRatio.MulInt(totalReward.Amount)
+		reward := gasRatio.MulInt(totalReward.Amount.Quo(sdk.NewInt(2)))
 
 		tvlRatio, tvlErr := k.TvlReward(ctx, contract)
 		if tvlErr != nil {
 			logger.Debug("could not get tvl ratio", "error", tvlErr.Error())
 		}
-		// TODO: Add TVL tracking here
-		// Create a new function which will fetch TVL according to `uside` balance
-		// Add that value to reward
+		reward.Add(tvlRatio.MulInt(totalReward.Amount.Quo(sdk.NewInt(2))))
+
 		if !reward.IsPositive() {
 			continue
 		}
