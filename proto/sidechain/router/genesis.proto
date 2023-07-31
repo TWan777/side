@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package sideprotocol.sidechain.router;
+
+import "gogoproto/gogo.proto";
+import "sidechain/router/params.proto";
+import "sidechain/router/packet.proto";
+option go_package = "github.com/sideprotocol/sidechain/x/router/types";
+
+// GenesisState defines the router module's genesis state.
+message GenesisState {
+  Params params  = 1 [(gogoproto.nullable) = false];
+  string port_id = 2;
+  map<string, RouterPacketData> router_packets = 3[(gogoproto.nullable) = false];
+}
+
+
+

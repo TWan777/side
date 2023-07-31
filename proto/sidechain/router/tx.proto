@@ -1,0 +1,7 @@
+syntax = "proto3";
+package sideprotocol.sidechain.router;
+
+option go_package = "github.com/sideprotocol/sidechain/x/router/types";
+
+// Msg defines the Msg service.
+service Msg {}
