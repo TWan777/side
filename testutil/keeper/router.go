@@ -14,8 +14,8 @@ import (
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
-	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
 	clienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -34,15 +34,15 @@ func (routerChannelKeeper) GetNextSequenceSend(ctx sdk.Context, portID, channelI
 }
 
 func (routerChannelKeeper) SendPacket(
-    ctx sdk.Context,
-    channelCap *capabilitytypes.Capability,
-    sourcePort string,
-    sourceChannel string,
-    timeoutHeight clienttypes.Height,
-    timeoutTimestamp uint64,
-    data []byte,
+	ctx sdk.Context,
+	channelCap *capabilitytypes.Capability,
+	sourcePort string,
+	sourceChannel string,
+	timeoutHeight clienttypes.Height,
+	timeoutTimestamp uint64,
+	data []byte,
 ) (uint64, error) {
-    return 0, nil
+	return 0, nil
 }
 
 func (routerChannelKeeper) ChanCloseInit(ctx sdk.Context, portID, channelID string, chanCap *capabilitytypes.Capability) error {
@@ -55,8 +55,6 @@ type routerPortKeeper struct{}
 func (routerPortKeeper) BindPort(ctx sdk.Context, portID string) *capabilitytypes.Capability {
 	return &capabilitytypes.Capability{}
 }
-
-
 
 func RouterKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	logger := log.NewNopLogger()
@@ -81,14 +79,14 @@ func RouterKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"RouterParams",
 	)
 	k := keeper.NewKeeper(
-        appCodec,
-        storeKey,
-        memStoreKey,
-        paramsSubspace,
-        routerChannelKeeper{},
-        routerPortKeeper{},
-        capabilityKeeper.ScopeToModule("RouterScopedKeeper"),
-    )
+		appCodec,
+		storeKey,
+		memStoreKey,
+		paramsSubspace,
+		routerChannelKeeper{},
+		routerPortKeeper{},
+		capabilityKeeper.ScopeToModule("RouterScopedKeeper"),
+	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)
 

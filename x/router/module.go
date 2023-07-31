@@ -25,7 +25,7 @@ import (
 var (
 	_ module.AppModule      = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
-	_ porttypes.IBCModule   = IBCModule{}
+	_ porttypes.IBCModule   = IBCMiddleware{}
 )
 
 // ----------------------------------------------------------------------------
