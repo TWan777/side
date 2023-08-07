@@ -26,11 +26,11 @@ accounts:
     coins:
       - 100000000000000000000000000000000000atoli
       - 100000000000000000000000000000000000aeth
-    
+
 faucet:
   name: bob
   coins:
-    - 10atoli
+    - 1000atoli
   host: 0.0.0.0:4500
 genesis:
   app_state:

@@ -100,6 +100,9 @@ import (
 	interchainswapkeeper "github.com/sideprotocol/ibcswap/v6/modules/apps/101-interchain-swap/keeper"
 	ibcinterchainswaptypes "github.com/sideprotocol/ibcswap/v6/modules/apps/101-interchain-swap/types"
 
+	//ibcrouter "github.com/sideprotocol/sidechain/x/router"
+
+
 	ibc "github.com/cosmos/ibc-go/v6/modules/core"
 	ibcclient "github.com/cosmos/ibc-go/v6/modules/core/02-client"
 	ibcclientclient "github.com/cosmos/ibc-go/v6/modules/core/02-client/client"
@@ -621,11 +624,14 @@ func NewSidechain(
 	// interchain stack
 	interchainStack := ibcinterchainswap.NewIBCModule(app.InterchainSwapKeeper)
 
+	
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferStack)
+	
 
 	// Add ibcswap module
+	
 	ibcRouter.AddRoute(ibcatomicswaptypes.ModuleName, atomicStack)
 	ibcRouter.AddRoute(ibcinterchainswaptypes.ModuleName, interchainStack)
 

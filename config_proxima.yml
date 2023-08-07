@@ -22,7 +22,7 @@ accounts:
     coins:
       - 100000000000000000000000000000000000aside
       - 100000000000000000000000000000000000ausdc    
-    address: prox1je8jw030lyw0mkyf8rd452gsstvrls4mxh4qp9
+    #address: prox1je8jw030lyw0mkyf8rd452gsstvrls4mxh4qp9
 faucet:
   name: bob
   coins:
