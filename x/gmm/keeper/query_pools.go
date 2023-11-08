@@ -25,10 +25,9 @@ func (k Keeper) Pool(goCtx context.Context, req *types.QueryPoolRequest) (*types
 }
 
 func (k Keeper) Pools(goCtx context.Context, req *types.QueryAllPoolsRequest) (*types.QueryPoolsResponse, error) {
-	return nil, status.Error(codes.InvalidArgument, "invalid request")
-	// if req == nil {
-	// 	return nil, status.Error(codes.InvalidArgument, "invalid request")
-	// }
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
 
 	pools := []types.Pool{}
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -69,7 +68,6 @@ func (k Keeper) Pools(goCtx context.Context, req *types.QueryAllPoolsRequest) (*
 }
 
 func (k Keeper) MyPools(goCtx context.Context, req *types.QueryPoolsRequest) (*types.QueryPoolsResponse, error) {
-	return nil, status.Error(codes.InvalidArgument, "invalid request")
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
