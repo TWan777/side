@@ -14,3 +14,5 @@ This specification outlines a solution enabling users to bridge assets without h
  - `Vault` is an external account on counterparty blockchains used to store escrowed assets. It is controlled by a Threshold Signature Scheme (TSS).
  - `Relayer` is a permissionless off-chain process with the ability to read the state of and submit transactions to a defined set of ledgers using the SIDE bridge protocol.
  - `TSS Communitee` is a group of validators, each owning a share of the TSS private key used to control the vault account.
+
+## Technical Specification
