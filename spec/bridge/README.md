@@ -16,3 +16,8 @@ This specification outlines a solution enabling users to bridge assets without h
  - `TSS Communitee` is a group of validators, each owning a share of the TSS private key used to control the vault account.
 
 ## Technical Specification
+
+Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Anyone can mint pegged assets by initiating an `inbound transaction` or burn pegged assets by executing an `outbound transaction`.
+
+### Transaction Flow 
+![flow](./transaction%20flow.png)
