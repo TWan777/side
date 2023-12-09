@@ -57,6 +57,9 @@ function updateClient(identifier: string, clientState: ClientState, header: Head
 ```
 
  - Verify Transaction
+
+Transactions can be verified by checking the inclusion of the Merkle tree by the on-chain light client.
+
 ```ts
 function verifyTransaction(identifer: string, Header: u64, txHash: string, proof: byte[]) {}
 ```
