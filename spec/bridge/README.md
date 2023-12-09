@@ -26,6 +26,41 @@ Similar to many other bridge solutions, we wrap bridged assets into pegged asset
 
 The light client traces states on counterparty chains and can be implemented in two types: probabilistic finality for PoW consensus blockchains (e.g., Bitcoin) and deterministic finality for PoS blockchains (e.g., Cosmos and Ethereum). 
 
+#### Data Structure
+
+ - `Client State`
+```ts
+interface ClientState {
+   type: string,
+   latestHeader: Header,
+   comfirmation: u64,
+   frozen: bool,
+   validators: Vec<pubkey, u64>, // only used for PoS client
+   difficulty: u64, // only used for PoW client
+}
+```
+ - `Header`
+```ts
+interface Header {
+    height: u64,
+    hash: string,
+    previous_hash: string,
+    root: string,
+}
+```
+
+ - Update Client
+
+The relayer updates the counterparty blockchain header to the on-chain light client. For PoS consensus light clients, the header should be valid by verifying the signatures of validators or the syncing committee (Ethereum). For PoW consensus light clients, it should check if the block hash matches the difficulty. Headers should be allowed to override before confirmation since the longest blockchain might have a different height than the shorter one.
+ ```ts
+function updateClient(identifier: string, clientState: ClientState, header: Header) {}
+```
+
+ - Verify Transaction
+```ts
+function verifyTransaction(identifer: string, Header: u64, txHash: string, proof: byte[]) {}
+```
+
 ### TSS Network
 
 Among the numerous Threshold Signature Schemes, the [Multi-Party Threshold Signature Scheme](https://github.com/bnb-chain/tss-lib) as the optimal choice due to its resharing feature. This feature enables the TSS network to reshare the shares of the private key when the validator set undergoes changes.
