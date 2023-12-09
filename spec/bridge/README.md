@@ -64,6 +64,14 @@ Transactions can be verified by checking the inclusion of the Merkle tree by the
 function verifyTransaction(identifer: string, Header: u64, txHash: string, proof: byte[]) {}
 ```
 
+#### Implementations
+
+ - Bitcoin Light Client
+ - Ethereum Light Client
+ - BSC Light Client
+ - Cosmos Light Client
+ - Solana Light Client
+
 ### TSS Network
 
 Among the numerous Threshold Signature Schemes, the [Multi-Party Threshold Signature Scheme](https://github.com/bnb-chain/tss-lib) as the optimal choice due to its resharing feature. This feature enables the TSS network to reshare the shares of the private key when the validator set undergoes changes.
