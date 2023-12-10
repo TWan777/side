@@ -19,6 +19,41 @@ This specification outlines a solution enabling users to bridge assets without h
 
 Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Anyone can mint pegged assets by initiating an `inbound transaction` or burn pegged assets by executing an `outbound transaction`.
 
+To prevent replay attacks, the states of both inbound and outbound transactions must be stored on the state chain.
+
+```ts
+interface InboundTransactions {
+   sourceChainId: string
+   hash: string,
+   status: Enum,
+   body: bytes[],
+}
+
+interface OutboundTransactions {
+   destChainId: string,
+   hash: string,
+   status: Enum,
+   body: bytes[],
+}
+```
+
+There should have following functions that help to get transaction or iterator transactions.
+```ts
+function getInboundTransaction(hash: string) {
+
+}
+
+function getInboundTransactions(status: Enum, start: int, limit: int) {
+
+}
+
+function getOutboundTransaction(hash: string) {
+
+}
+
+function getOutboundTransactions(status: Enum, start: int, limit: int) {
+
+}
 ### Transaction Flow 
 ![flow](./transaction%20flow.png)
 
@@ -31,6 +66,7 @@ The light client traces states on counterparty chains and can be implemented in 
  - `Client State`
 ```ts
 interface ClientState {
+   chainId: string,
    type: string,
    latestHeader: Header,
    comfirmation: u64,
@@ -52,6 +88,7 @@ interface Header {
  - Update Client
 
 The relayer updates the counterparty blockchain header to the on-chain light client. For PoS consensus light clients, the header should be valid by verifying the signatures of validators or the syncing committee (Ethereum). For PoW consensus light clients, it should check if the block hash matches the difficulty. Headers should be allowed to override before confirmation since the longest blockchain might have a different height than the shorter one.
+
  ```ts
 function updateClient(identifier: string, clientState: ClientState, header: Header) {}
 ```
@@ -132,3 +169,9 @@ go func() {
 ```
 
 ⚠️ During re-sharing the key data may be modified during the rounds. Do not ever overwrite any data saved on disk until the final struct has been received through the end channel.
+
+
+### Relayer
+
+To simplify the implementation, there should be at most one bridge connecting two blockchains. This implies that only one vault should exist on the counterparty chain.
+
