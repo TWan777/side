@@ -37,7 +37,8 @@ interface OutboundTransactions {
 }
 ```
 
-There should have following functions that help to get transaction or iterator transactions.
+There should be the following functions to facilitate obtaining transactions or iterating through transactions.
+
 ```ts
 function getInboundTransaction(hash: string) {
 
