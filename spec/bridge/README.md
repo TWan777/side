@@ -18,42 +18,34 @@ This specification outlines a solution enabling users to bridge assets without h
    
 ## Technical Specification
 
-Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Anyone can mint pegged assets by initiating an `inbound transaction` or burn pegged assets by executing an `outbound transaction`.
+Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `MintRequest` or burn pegged assets through the execution of a `BurnRequest` to withdraw native assets.
 
 To prevent replay attacks, the states of both inbound and outbound transactions must be stored on the state chain.
 
 ```ts
-interface InboundTransactions {
+interface MintRequest {
    sourceChainId: string
    hash: string,
    status: Enum,
-   body: bytes[],
+   tx: bytes[],
 }
 
-interface OutboundTransactions {
+interface BurnRequest {
    destChainId: string,
    hash: string,
    status: Enum,
-   body: bytes[],
+   tx: bytes[],
 }
 ```
 
 There should be the following functions to facilitate obtaining transactions or iterating through transactions.
 
 ```ts
-function getInboundTransaction(hash: string) {
+function getRequest(hash: string) {
 
 }
 
-function getInboundTransactions(status: Enum, start: int, limit: int) {
-
-}
-
-function getOutboundTransaction(hash: string) {
-
-}
-
-function getOutboundTransactions(status: Enum, start: int, limit: int) {
+function getRequests(status: Enum, start: int, limit: int) {
 
 }
 ```
