@@ -54,6 +54,8 @@ function getOutboundTransaction(hash: string) {
 function getOutboundTransactions(status: Enum, start: int, limit: int) {
 
 }
+```
+
 ### Transaction Flow 
 ![flow](./transaction%20flow.png)
 
