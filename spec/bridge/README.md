@@ -96,7 +96,23 @@ function initialClient(identifier: string, clientState: ClientState, header: Hea
  
  - Update Client
 
-The relayer updates the counterparty blockchain header to the on-chain light client. For PoS consensus light clients, the header should be valid by verifying the signatures of validators or the syncing committee (Ethereum). For PoW consensus light clients, it should check if the block hash matches the difficulty. Headers should be allowed to override before confirmation since the longest blockchain might have a different height than the shorter one.
+The relayer periodically updates the latest state to the on-chain light client. The update frequency depends on the connected blockchain, and failure to update in a timely manner may result in the light client being unable to process the latest transactions.
+
+The client state is fundamental to the security assumptions, and a vulnerable implementation poses risks to the bridge, increasing the potential for losing assets.
+
+For **PoS** consensus light clients, verification includes the following conditions:
+   1. The block should have a minimum threshold of voting power signatures from trusted validators.
+   2. `chain_id` should be the same.
+   3. `height` should be greater than the current height.
+   4. The client state can be updated along with the inbound transaction or if the validator set has changed.
+
+For **PoW** consensus light clients, verification includes the following conditions:
+   1. Check if the block hash matches the difficulty.
+   2. `chain_id` should be the same.
+   3. `height` should be greater than the current height.
+   4. The client state should be updated at each height.
+   5. Headers should be allowed to override before confirmation since the longest blockchain might have a different height than the shorter one.
+
 
  ```ts
 function updateClient(identifier: string, clientState: ClientState, header: Header) {}
