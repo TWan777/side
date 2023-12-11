@@ -86,7 +86,14 @@ interface Header {
     root: string,
 }
 ```
+ - Initilize Client
 
+The Light Client can be initialized through on-chain governance by specifying parameters such as `chain-id`, a trusted `Header`, `vault address`, and other relevant details.
+
+```ts
+function initialClient(identifier: string, clientState: ClientState, header: Header) {}
+```
+ 
  - Update Client
 
 The relayer updates the counterparty blockchain header to the on-chain light client. For PoS consensus light clients, the header should be valid by verifying the signatures of validators or the syncing committee (Ethereum). For PoW consensus light clients, it should check if the block hash matches the difficulty. Headers should be allowed to override before confirmation since the longest blockchain might have a different height than the shorter one.
