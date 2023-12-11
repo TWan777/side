@@ -99,11 +99,11 @@ function updateClient(identifier: string, clientState: ClientState, header: Head
 
 Transactions can be verified by checking the following conditions using the on-chain light client:
 
- - Verifying if the transaction is included in the Merkle tree root of the block header.
- - Verifying if the chain ID is the same.
- - Verifying if the receiver is the vault address.
- - Verifying if the transaction has executed successfully.
- - Verifying if the transaction has deposited sufficient assets.
+   1. Verifying if the transaction is included in the Merkle tree root of the block header.
+   2. Verifying if the chain ID is the same.
+   3. Verifying if the receiver is the vault address.
+   4. Verifying if the transaction has executed successfully.
+   5. Verifying if the transaction has deposited sufficient assets.
 
 The relayer is responsible for generating the proof of inclusion, which helps ensure the integrity and validity of the transactions.
 
