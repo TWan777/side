@@ -20,7 +20,7 @@ This specification outlines a solution enabling users to bridge assets without h
 
 Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `MintRequest` or burn pegged assets through the execution of a `BurnRequest` to withdraw native assets.
 
-To prevent replay attacks, the states of both inbound and outbound transactions must be stored on the state chain.
+To prevent replay attacks, the states of both MintRequest and BurnRequest transactions must be stored on the state chain.
 
 ```ts
 interface MintRequest {
@@ -28,6 +28,7 @@ interface MintRequest {
    hash: string,
    status: Enum,
    tx: bytes[],
+   createAt: u64,
 }
 
 interface BurnRequest {
@@ -35,8 +36,11 @@ interface BurnRequest {
    hash: string,
    status: Enum,
    tx: bytes[],
+   createAt: u64,
 }
 ```
+
+To enhance security, MintRequests have a time limit of 24 hours. Users must complete the process of depositing assets on the external chain within this timeframe after initiating a MintRequest. This time constraint helps mitigate potential security risks associated with prolonged open MintRequests.
 
 There should be the following functions to facilitate obtaining transactions or iterating through transactions.
 
@@ -184,3 +188,6 @@ function relay(c: Chain>) {
       chain.submitDatagram(localTx)
 }
 ```
+
+## Use Cases
+
