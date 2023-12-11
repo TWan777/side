@@ -102,13 +102,13 @@ The relayer periodically updates the latest state to the on-chain light client. 
 
 The client state is fundamental to the security assumptions, and a vulnerable implementation poses risks to the bridge, increasing the potential for losing assets.
 
-For **PoS** consensus light clients, verification includes the following conditions:
+For **PoS consensus** light clients, verification includes the following conditions:
    1. The block should have a minimum threshold of voting power signatures from trusted validators.
    2. `chain_id` should be the same.
    3. `height` should be greater than the current height.
    4. The client state can be updated along with the inbound transaction or if the validator set has changed.
 
-For **PoW** consensus light clients, verification includes the following conditions:
+For **PoW consensus** light clients, verification includes the following conditions:
    1. Check if the block hash matches the difficulty.
    2. Check if the block includes the hash of the latest trusted block (height-1).
    3. `chain_id` should be the same.
