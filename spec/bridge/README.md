@@ -1,8 +1,8 @@
-# Omini Chain Bridge
+# Telebase
 
 ## Introduction
 
-This specification outlines a solution enabling users to bridge assets without having to trust any third parties.
+This specification outlines a solution enabling users to manage crosschain assets without having to trust any third parties.
 
 ## Architecture
 ![Component](./components.png)
@@ -16,11 +16,11 @@ This specification outlines a solution enabling users to bridge assets without h
  - `TSS network` is a collaborative network consisting of validators, each possessing a share of the TSS private key. This collective ownership is crucial for controlling the vault account effectively.
  - `Peggy Token`: A tokenized asset pegged on the SIDE blockchain, enabling smooth interoperability. This involves locking assets on a counterparty chain and minting equivalent tokens on the SIDE blockchain, facilitating seamless cross-chain asset transfers while maintaining a fixed value ratio. For consistency and clarity, all peggy tokens must adhere to the naming convention: they should commence with the prefix `side/` followed by a hash generated from `chain_id`, `vault address`, and `symbol`. This ensures a standardized and identifiable nomenclature for peggy tokens.
    
-## Technical Specification
+## Telebase Core
 
-Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `MintRequest` or burn pegged assets through the execution of a `BurnRequest` to withdraw native assets.
+Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `MintRequest` or burn pegged assets through the execution of a `VaultActionRequest` to withdraw native assets.
 
-To prevent replay attacks, the states of both MintRequest and BurnRequest transactions must be stored on the state chain.
+To prevent replay attacks, the states of both MintRequest and VaultActionRequest transactions must be stored on the state chain.
 
 ```ts
 interface MintRequest {
@@ -31,8 +31,9 @@ interface MintRequest {
    createAt: u64,
 }
 
-interface BurnRequest {
+interface VaultActionRequest {
    destChainId: string,
+   action: string,  // can be defined in app, such as AtomicSwap, LSD
    hash: string,
    status: Enum,
    tx: bytes[],
@@ -140,7 +141,6 @@ function verifyTransaction(identifer: string, header: Header, txHash: string, pr
  - Bitcoin Light Client
  - Ethereum Light Client
  - BSC Light Client
- - Cosmos Light Client
  - Solana Light Client
 
 ### TSS Network
@@ -149,7 +149,7 @@ Among the numerous Threshold Signature Schemes, the [Multi-Party Threshold Signa
 
 All validators are required to operate a TSS Node to be eligible for rewards. Similar to signing blocks, validators must sign a minimum of 80% of transactions within a slashing epoch. Failure to meet this criterion results in the loss of rewards, including their block rewards.
 
-The TSS Network acts as the owner of vaults on external blockchains. Its responsibility includes signing outbound transactions to approve the execution of transactions on external blockchains in accordance with `BurnRequests` on the SIDE blockchain.
+The TSS Network acts as the owner of vaults on external blockchains. Its responsibility includes signing outbound transactions to approve the execution of transactions on external blockchains in accordance with `VaultActionRequests` on the SIDE blockchain.
 
 
  - Setup
@@ -226,5 +226,5 @@ function relay(c: Chain>) {
 }
 ```
 
-## Use Cases
+## Telebase Apps
 
