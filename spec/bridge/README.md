@@ -117,7 +117,7 @@ Among the numerous Threshold Signature Schemes, the [Multi-Party Threshold Signa
 
 All validators are required to operate a TSS Node to be eligible for rewards. Similar to signing blocks, validators must sign a minimum of 80% of transactions within a slashing epoch. Failure to meet this criterion results in the loss of rewards, including their block rewards.
 
-The TSS Network acts as the owner of vaults on external blockchains. Its responsibility includes signing outbound transactions to approve the execution of transactions on external blockchains in accordance with BurnRequests on the SIDE blockchain.
+The TSS Network acts as the owner of vaults on external blockchains. Its responsibility includes signing outbound transactions to approve the execution of transactions on external blockchains in accordance with `BurnRequests` on the SIDE blockchain.
 
 
  - Setup
