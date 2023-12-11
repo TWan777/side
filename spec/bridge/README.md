@@ -108,10 +108,11 @@ For **PoS** consensus light clients, verification includes the following conditi
 
 For **PoW** consensus light clients, verification includes the following conditions:
    1. Check if the block hash matches the difficulty.
-   2. `chain_id` should be the same.
-   3. `height` should be greater than the current height.
-   4. The client state should be updated at each height.
-   5. Headers should be allowed to override before confirmation since the longest blockchain might have a different height than the shorter one.
+   2. Check if the block includes the hash of the latest trusted block (height-1).
+   3. `chain_id` should be the same.
+   4. `height` should be greater than the current height.
+   5. The client state should be updated at each height.
+   6. Headers should be allowed to override before confirmation since the longest blockchain might have a different height than the shorter one.
 
 
  ```ts
