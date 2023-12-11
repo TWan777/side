@@ -61,6 +61,8 @@ function getRequests(status: Enum, start: int, limit: int) {
 
 The light client traces states on counterparty chains and can be implemented in two types: probabilistic finality for PoW consensus blockchains (e.g., Bitcoin) and deterministic finality for PoS blockchains (e.g., Cosmos and Ethereum). 
 
+The light client on the SIDE blockchain is responsible for verifying that a transaction has been executed on the counterparty blockchain. Its primary role is to ensure that the vault account has received the necessary assets as a result of the transaction.
+
 #### Data Structure
 
  - `Client State`
@@ -95,7 +97,7 @@ function updateClient(identifier: string, clientState: ClientState, header: Head
 
  - Verify Transaction
 
-Transactions can be verified by checking the inclusion of the Merkle tree by the on-chain light client.
+Transactions can be verified by checking the inclusion of the Merkle tree by the on-chain light client. The relayer is responsible for generating the proof of inclusion, which helps ensure the integrity and validity of the transactions.
 
 ```ts
 function verifyTransaction(identifer: string, Header: u64, txHash: string, proof: byte[]) {}
