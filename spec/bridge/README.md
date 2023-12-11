@@ -18,13 +18,14 @@ This specification outlines a solution enabling users to manage crosschain asset
    
 ## Telebase Core
 
-Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `MintRequest` or burn pegged assets through the execution of a `VaultActionRequest` to withdraw native assets.
+Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `IntentRequest` or burn pegged assets through the execution of a `VaultActionRequest` to withdraw native assets.
 
-To prevent replay attacks, the states of both MintRequest and VaultActionRequest transactions must be stored on the state chain.
+To prevent replay attacks, the states of both `IntentRequest` and `VaultActionRequest` transactions must be stored on the state chain.
 
 ```ts
-interface MintRequest {
+interface IntentRequest {
    sourceChainId: string
+   action: string,
    hash: string,
    status: Enum,
    tx: bytes[],
@@ -41,7 +42,7 @@ interface VaultActionRequest {
 }
 ```
 
-To enhance security, `MintRequests` have a time limit of 24 hours. Assets deposited after this designated time frame will not be processed and, consequently, will be forfeited. It is essential for users to adhere to the 24-hour limit to ensure the successful completion of the asset deposit on the external chain.
+To enhance security, `IntentRequests` have a time limit of 24 hours. Assets deposited after this designated time frame will not be processed and, consequently, will be forfeited. It is essential for users to adhere to the 24-hour limit to ensure the successful completion of the asset deposit on the external chain.
 
 There should be the following functions to facilitate obtaining transactions or iterating through transactions.
 
