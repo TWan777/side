@@ -40,8 +40,7 @@ interface BurnRequest {
 }
 ```
 
-To enhance security, MintRequests have a time limit of 24 hours. Users must complete the process of depositing assets on the external chain within this timeframe after initiating a MintRequest. Assets deposited after this designated time frame will not be processed and, consequently, will be forfeited. It is essential for users to adhere to the 24-hour limit to ensure the successful completion of the asset deposit on the external chain.
-
+To enhance security, MintRequests have a time limit of 24 hours. Assets deposited after this designated time frame will not be processed and, consequently, will be forfeited. It is essential for users to adhere to the 24-hour limit to ensure the successful completion of the asset deposit on the external chain.
 
 There should be the following functions to facilitate obtaining transactions or iterating through transactions.
 
