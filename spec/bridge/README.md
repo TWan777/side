@@ -28,7 +28,7 @@ interface IntentRequest {
    action: string,
    hash: string,
    status: Enum,
-   tx: bytes[],
+   inboundTx: bytes[],
    createAt: u64,
 }
 
@@ -37,7 +37,7 @@ interface VaultActionRequest {
    action: string,  // can be defined in app, such as AtomicSwap, LSD
    hash: string,
    status: Enum,
-   tx: bytes[],
+   outboundTx: bytes[],
    createAt: u64,
 }
 ```
@@ -90,7 +90,7 @@ interface Header {
 ```
  - Initilize Client
 
-The Light Client can be initialized through on-chain governance by specifying parameters such as `chain-id`, a trusted `Header`, `vault address`, and other relevant details.
+The Light Client can be initialized through on-chain governance by specifying parameters such as `clientId`, a trusted `Header`, `vault address`, and other relevant details.
 
 ```ts
 function initialClient(identifier: string, clientState: ClientState, header: Header) {}
