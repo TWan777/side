@@ -18,9 +18,9 @@ This specification outlines a solution enabling users to manage crosschain asset
    
 ## Telebase Core
 
-Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `IntentRequest` or burn pegged assets through the execution of a `VaultActionRequest` to withdraw native assets.
+Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `IntentRequest` or burn pegged assets through the execution of a `SigningRequest` to withdraw native assets.
 
-To prevent replay attacks, the states of both `IntentRequest` and `VaultActionRequest` transactions must be stored on the state chain.
+To prevent replay attacks, the states of both `IntentRequest` and `SigningRequest` transactions must be stored on the state chain.
 
 ```ts
 interface IntentRequest {
@@ -32,7 +32,7 @@ interface IntentRequest {
    createAt: u64,
 }
 
-interface VaultActionRequest {
+interface SigningRequest {
    destChainId: string,
    action: string,  // can be defined in app, such as AtomicSwap, LSD
    hash: string,
@@ -148,7 +148,7 @@ Among the numerous Threshold Signature Schemes, the [Multi-Party Threshold Signa
 
 All validators are required to operate a TSS Node to be eligible for rewards. Similar to signing blocks, validators must sign a minimum of 80% of transactions within a slashing epoch. Failure to meet this criterion results in the loss of rewards, including their block rewards.
 
-The TSS Network acts as the owner of vaults on external blockchains. Its responsibility includes signing outbound transactions to approve the execution of transactions on external blockchains in accordance with `VaultActionRequests` on the SIDE blockchain.
+The TSS Network acts as the owner of vaults on external blockchains. Its responsibility includes signing outbound transactions to approve the execution of transactions on external blockchains in accordance with `SigningRequest`s on the SIDE blockchain.
 
 
  - Setup
@@ -234,3 +234,24 @@ The Cross-Chain Bridge is a Telebase app that enables users to deposit assets fr
 #### Transaction Flow 
 ![flow](./transaction%20flow.png)
 
+
+### Atomic Swap
+
+The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+
+#### Transaction Flow 
+![flow](./transaction%20flow.png)
+
+### Mesh Liquidity
+
+The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+
+#### Transaction Flow 
+![flow](./transaction%20flow.png)
+
+### Liquid Staking
+
+The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+
+#### Transaction Flow 
+![flow](./transaction%20flow.png)
