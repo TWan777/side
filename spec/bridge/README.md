@@ -42,7 +42,7 @@ interface VaultActionRequest {
 }
 ```
 
-To enhance security, `IntentRequests` have a time limit of 24 hours. Assets deposited after this designated time frame will not be processed and, consequently, will be forfeited. It is essential for users to adhere to the 24-hour limit to ensure the successful completion of the asset deposit on the external chain.
+To enhance security, `IntentRequests` have a time limit of 24 hours. Any assets deposited after this designated time frame will not be processed and, consequently, will be forfeited. Users must adhere to the 24-hour limit to ensure the successful completion of the asset deposit on the external chain. Additionally, only one open request is allowed per account.
 
 There should be the following functions to facilitate obtaining transactions or iterating through transactions.
 
@@ -55,9 +55,6 @@ function getRequests(status: Enum, start: int, limit: int) {
 
 }
 ```
-
-### Transaction Flow 
-![flow](./transaction%20flow.png)
 
 ### Light Client
 
@@ -130,6 +127,7 @@ Transactions can be verified by checking the following conditions using the on-c
    3. Verifying if the receiver is the vault address.
    4. Verifying if the transaction has executed successfully.
    5. Verifying if the transaction has deposited sufficient assets.
+   6. Verifying if the transaction was executed within a designated time frame from the request start.
 
 The relayer is responsible for generating the proof of inclusion, which helps ensure the integrity and validity of the transactions.
 
@@ -228,4 +226,11 @@ function relay(c: Chain>) {
 ```
 
 ## Telebase Apps
+
+### Cross chain Bridge
+
+The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+
+#### Transaction Flow 
+![flow](./transaction%20flow.png)
 
