@@ -5,7 +5,7 @@
 This specification outlines a solution enabling users to manage crosschain assets without having to trust any third parties.
 
 ## Architecture
-![Component](./components.png)
+![Component](./architecture.png)
 
 ## Definition
 
@@ -232,7 +232,7 @@ function relay(c: Chain>) {
 The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
 
 #### Transaction Flow 
-![flow](./transaction%20flow.png)
+![flow](./bridge_workflow.png)
 
 
 ### Atomic Swap
@@ -240,18 +240,18 @@ The Cross-Chain Bridge is a Telebase app that enables users to deposit assets fr
 The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
 
 #### Transaction Flow 
-![flow](./transaction%20flow.png)
+![flow](./atomic_swap_workflow.png)
 
 ### Mesh Liquidity
 
 The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
 
 #### Transaction Flow 
-![flow](./transaction%20flow.png)
+![flow](./mesh_liquidity_workflow.png)
 
 ### Liquid Staking
 
 The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
 
 #### Transaction Flow 
-![flow](./transaction%20flow.png)
+![flow](./liquid_staking_workflow.png)
