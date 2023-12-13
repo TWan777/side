@@ -225,7 +225,7 @@ function relay(c: Chain>) {
 }
 ```
 
-### App 
+### App structure
 
 ```ts
 public interface AbstractCrossChainApp {
