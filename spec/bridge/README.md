@@ -265,14 +265,14 @@ The Atomic Swap is a Telebase app that empowers users to execute cross-chain ato
 
 ### Mesh Liquidity
 
-The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+The Mesh Liquidity is a Telebase app that establishes a cross-chain liquidity pool, enabling users to swap tokens within the pool without the need for transferring tokens between different chains.
 
 #### Transaction Flow 
 ![flow](./mesh_liquidity_workflow.png)
 
 ### Liquid Staking
 
-The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+The Liquid Staking Telebase app enables users to deposit ETH into Lido before its peggyed on the SIDE chain. This allows users to obtain rewards from both Lido and the SIDE chain. This app only works on ethereum for now.
 
 #### Transaction Flow 
 ![flow](./liquid_staking_workflow.png)
