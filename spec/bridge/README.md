@@ -227,6 +227,8 @@ function relay(c: Chain>) {
 
 ### App structure
 
+Telebase Apps should implement the `AbstractCrossChainApp` interface, tailoring it to their specific business logic.
+
 ```ts
 public interface AbstractCrossChainApp {
    // on chain light client
@@ -256,7 +258,7 @@ The Cross-Chain Bridge is a Telebase app that enables users to deposit assets fr
 
 ### Atomic Swap
 
-The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+The Atomic Swap is a Telebase app that empowers users to execute cross-chain atomic swaps directly between two blockchains, allowing for transactions like swapping BTC for ETH.
 
 #### Transaction Flow 
 ![flow](./atomic_swap_workflow.png)
