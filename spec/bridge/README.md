@@ -19,7 +19,6 @@ This specification outlines a solution enabling users to manage crosschain asset
    
 ## Telebase Core
 
-Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `IntentRequest` or burn pegged assets through the execution of a `SigningRequest` to withdraw native assets.
 
 To prevent replay attacks, the states of both `IntentRequest` and `SigningRequest` transactions must be stored on the state chain.
 
@@ -253,6 +252,8 @@ public interface AbstractCrossChainApp {
 ### Cross chain Bridge
 
 The Cross-Chain Bridge is a Telebase app that enables users to deposit assets from an external blockchain to mint Peggy assets on the SIDE blockchain. It also facilitates the burning of Peggy assets on the SIDE blockchain to withdraw native assets on the external blockchain.
+
+Similar to many other bridge solutions, we wrap bridged assets into pegged assets with a 1:1 ratio. Users have the flexibility to mint pegged assets by initiating a `IntentRequest` or burn pegged assets through the execution of a `SigningRequest` to withdraw native assets.
 
 #### Transaction Flow 
 ![flow](./bridge_workflow.png)
