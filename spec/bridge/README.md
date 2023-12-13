@@ -228,12 +228,18 @@ function relay(c: Chain>) {
 ### App 
 
 ```ts
-public class AbstractCrossChainApp {
+public interface AbstractCrossChainApp {
+   // on chain light client
    client LightClient;
+   // route `IntentRequest` to handler
    function intentRequestRoute(intent: IntentRequest);
+   // verify Inbound Tx and mint
    function onInboundAcknowledgement(txHash: string, proof: byte[]);
+   // request TSS network for signing
    function requestSigning(signRequest: SigningRequest);
-   function writeSignature(signRequest: SigningRequest, signature: string); 
+   // write TSS signature by TSS network leader
+   function writeSignature(signRequest: SigningRequest, signature: string);
+   // update status of tx execution
    function onOutboundAcknowledgement(txHash: string, proof: byte[]);       
 }
 ```
