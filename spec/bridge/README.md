@@ -225,6 +225,19 @@ function relay(c: Chain>) {
 }
 ```
 
+### App 
+
+```ts
+public class AbstractCrossChainApp {
+   client LightClient;
+   function intentRequestRoute(intent: IntentRequest);
+   function onInboundAcknowledgement(txHash: string, proof: byte[]);
+   function requestSigning(signRequest: SigningRequest);
+   function writeSignature(signRequest: SigningRequest, signature: string); 
+   function onOutboundAcknowledgement(txHash: string, proof: byte[]);       
+}
+```
+
 ## Telebase Apps
 
 ### Cross chain Bridge
