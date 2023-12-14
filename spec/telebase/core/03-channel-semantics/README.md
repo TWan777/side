@@ -6,9 +6,9 @@ A channel functions as a conduit for interchain operations between a designated 
 ```ts
 interface Channel {
    // specific which client is used for verification of inbound transaction. 
-   client_id: string,
-   vault_address: string,
-   app_id: string,
+   client_id: string;
+   vault_address: string;
+   app_id: string;
    // verify if this transaction is included in the external chain.
    function verify(txHash: string, proof: byte[]);
 }
