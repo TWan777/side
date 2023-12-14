@@ -1,5 +1,19 @@
 # Channel
 
+A channel functions as a conduit for interchain operations between a designated module on the SIDE blockchain and a vault on an external blockchain. It guarantees that the vault exclusively accepts transactions sent from the specified module. Additionally, it triggers an acknowledgment function of the module to update states by monitoring received transactions that interact with the vault on the external blockchain.
+
+## Data Structure
+```ts
+interface Channel {
+   // specific which client is used for verification of inbound transaction. 
+   client_id: string,
+   vault_address: string,
+   app_id: string,
+   // verify if this transaction is included in the external chain.
+   function verify(txHash: string, proof: byte[]);
+}
+```
+
 
 To prevent replay attacks, the states of both `IntentRequest` and `SigningRequest` transactions must be stored on the state chain.
 
