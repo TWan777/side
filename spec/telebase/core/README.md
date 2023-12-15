@@ -81,7 +81,7 @@ Message handling should fail if:
 
 ```proto
 message MsgUpdateClient {
-  option (cosmos.msg.v1.signer) = "proposer";
+  option (cosmos.msg.v1.signer) = "sender";
   option (amino.name)           = "cosmos-sdk/v1/MsgUpdateClient";
 
   string client_id = 1;
