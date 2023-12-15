@@ -76,3 +76,23 @@ Message handling should fail if:
 - The provided `id` already exists.
 - The provided `client_id` does not exist.
 - The provided `hd_path` has been used in another channel.
+
+### MsgUpdateClient
+
+```proto
+message MsgUpdateClient {
+  option (cosmos.msg.v1.signer) = "proposer";
+  option (amino.name)           = "cosmos-sdk/v1/MsgUpdateClient";
+
+  string client_id = 1;
+  Header header = 2;
+  repeated string[] validators = 3
+}
+```
+
+Message handling should fail if:
+
+- The provided `height` of the header is less than the `height` of `latestHeader` of the client.
+- The provided `client_id` does not exist.
+- `client.verify(header: Header)` returns `false`.
+
