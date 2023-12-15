@@ -86,7 +86,7 @@ message MsgUpdateClient {
 
   string client_id = 1;
   Header header = 2;
-  repeated string[] validators = 3
+  repeated string[] validators = 3;
 }
 ```
 
@@ -96,3 +96,45 @@ Message handling should fail if:
 - The provided `client_id` does not exist.
 - `client.verify(header: Header)` returns `false`.
 
+### MsgSubmitSignature
+
+```proto
+message MsgSubmitSignature {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "cosmos-sdk/v1/MsgSubmitSignature";
+
+  string request_id = 1;
+  string signature = 2;
+}
+```
+
+Message handling should fail if:
+
+- The provided `request_id` does not exist.
+- The provided `signature` is not valid according to the request's outbound transaction and public key.
+
+### MsgSubmitAcknowledgement
+
+```proto
+message MsgSubmitAcknowledgement {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "cosmos-sdk/v1/MsgSubmitAcknowledgement";
+
+  string request_id = 1;
+  u64: height;
+  any transaction = 2;
+  string proof = 3;
+}
+```
+
+Message handling should fail if:
+
+- The provided `request_id` does not exist.
+- The provided `height` does not exist.
+- The provided `proof` cannot prove that the `transaction` is included in the specified `height`.
+- The provided `sender` of the transaction does not match the `expected_sender` of the Request.
+
+
+
+
+  
