@@ -1,4 +1,4 @@
-# SIDE Cross Chain Account
+# SIDE CCA - Cross Chain Account
 
 ## Introduction
 
