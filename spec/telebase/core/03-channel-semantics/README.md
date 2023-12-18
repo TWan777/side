@@ -51,3 +51,8 @@ function getRequests(status: Enum, start: int, limit: int) {
 
 }
 ```
+
+## Definition
+
+ - **Inbound Transaction** : A transaction initiated by users that involves interaction with the Cross Chain Account (CCA) on a remote blockchain.
+ - **Outbound Transaction**: A transaction initiated based on users' IntentRequest on the controller chain. This request involves the TSS network for signing and execution on the remote chain.
