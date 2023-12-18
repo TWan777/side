@@ -1,6 +1,6 @@
 # Channel
 
-A channel functions as a conduit for interchain operations between a designated module on the SIDE blockchain and a CCA on a remote blockchain. It guarantees that the vault exclusively accepts transactions sent from the specified module. Additionally, it triggers an acknowledgment function of the module to update states by monitoring received transactions that interact with the CCA on the remote blockchain.
+A channel functions as a conduit for interchain operations between a designated module on the controller blockchain and a CCA on a remote blockchain. It guarantees that the vault exclusively accepts transactions sent from the specified module. Additionally, it triggers an acknowledgment function of the module to update states by monitoring received transactions that interact with the CCA on the remote blockchain.
 
 ## Data Structure
 ```ts
@@ -15,7 +15,7 @@ interface Channel {
 ```
 
 
-To prevent replay attacks, the states of both `IntentRequest` and `SigningRequest` transactions must be stored on the state chain.
+To prevent replay attacks, the states of both `IntentRequest` and `SigningRequest` transactions must be stored on the controller chain.
 
 ```ts
 interface IntentRequest {
