@@ -1,6 +1,6 @@
 # Channel
 
-A channel functions as a conduit for interchain operations between a designated module on the SIDE blockchain and a vault on an external blockchain. It guarantees that the vault exclusively accepts transactions sent from the specified module. Additionally, it triggers an acknowledgment function of the module to update states by monitoring received transactions that interact with the vault on the external blockchain.
+A channel functions as a conduit for interchain operations between a designated module on the SIDE blockchain and a CCA on a remote blockchain. It guarantees that the vault exclusively accepts transactions sent from the specified module. Additionally, it triggers an acknowledgment function of the module to update states by monitoring received transactions that interact with the CCA on the remote blockchain.
 
 ## Data Structure
 ```ts
