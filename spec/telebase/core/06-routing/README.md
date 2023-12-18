@@ -4,7 +4,7 @@
 
 The routing module is a default implementation of a secondary module responsible for accepting inbound transactions and invoking functions of the CCA core to ensure authenticity and transaction relay. This module maintains a lookup table of apps, allowing it to efficiently find and invoke the appropriate app when a transaction is received. External relayers only need to relay transactions to the routing module, simplifying the transaction processing workflow.
 
-## Motivation-
+## Motivation
 
 The default CCA handler adopts a receiver call pattern, requiring modules to individually call the CCA handler for tasks like binding to a channel, sending and receiving transactions, and more. While flexible and straightforward, this approach can be a bit intricate and may demand additional effort from relayer processes, which need to monitor the state of multiple modules. This standard introduces a CCA "routing module" designed to automate prevalent functionalities, route transactions, and streamline the responsibilities of relayers.
 
