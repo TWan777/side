@@ -56,3 +56,21 @@ function getRequests(status: Enum, start: int, limit: int) {
 
  - **Inbound Transaction** : A transaction initiated by users that involves interaction with the Cross Chain Account (CCA) on a remote blockchain.
  - **Outbound Transaction**: A transaction initiated based on users' IntentRequest on the controller chain. This request involves the TSS network for signing and execution on the remote chain.
+
+## Life Scope
+
+**Life Scope of Inbound Transaction:**
+1. **Registered:** The IntentRequest is registered on the controller chain.
+2. **Executed:** The transaction has been executed on the remote chain, and the result is synced to the controller chain by a relayer.
+3. **Confirmed:** The transaction has passed validation by the light client on the controller chain.
+4. **Finalized:** The transaction has been finalized on the controller chain.
+5. **Expired:** An IntentRequest that hasn't received the corresponding inbound transaction within a fixed window.
+
+**Life Scope of Outbound Transaction:**
+1. **Initiated:** A SigningRequest is created by a transaction on the controller chain.
+2. **Signed:** The transaction has been signed by the TSS network.
+3. **Broadcasted:** The transaction has been written to a relay queue for broadcasting.
+4. **Executed:** The transaction has been executed on the remote chain, and the result is synced to the controller chain by a relayer.
+5. **Confirmed:** The transaction has passed validation by the light client on the controller chain.
+6. **Finalized:** The transaction has been finalized on the controller chain.
+
