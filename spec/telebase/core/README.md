@@ -19,17 +19,23 @@ Channel is mainly composed of id, clientId, appId, externalChainId, vaultAddress
 
 ### Request
    
-Requests are created within specific modules to implement their unique business logic. There are two types of requests: `IntentRequest` and `SigningRequest`.
+Requests are created within specific modules to implement their unique business logic. There are two types of requests: `<Intent>Request` and `SigningRequest`.
 
-Telebase Core is responsible for monitoring the execution of `IntentRequest`, facilitating transactions that interoperate with the vault on an counterparty chain, and notifying the states to the specific sub app.
+Telebase Core is responsible for monitoring the execution of `<Intent>Request`, facilitating transactions that interoperate with the vault on an counterparty chain, and notifying the states to the specific sub app.
 
 Telebase Core also handles the acceptance and verification of signatures in `SigningRequest`, tracing the execution result on the counterparty chain.
 
 - Request: 0x03 | RequestId | -> ProtocolBuffer(Request)
 
+### Remote Transaction
+
+Remote Transaction are mainly composed of channelId, direction, transaction, txResponse, height, proof. 
+
+- Remote Transaction: 0x04 | ChannelId | TxHash | -> ProtocolBuffer(Transaction)
+
 ## Messages
 
-In this section we describe the processing of messages for the Telebase core module.
+In this section we describe the processing of messages for the CCA Core module.
 
 ### MsgCreateLightClient
 ```proto
@@ -113,14 +119,15 @@ Message handling should fail if:
 - The provided `request_id` does not exist.
 - The provided `signature` is not valid according to the request's outbound transaction and public key.
 
-### MsgSubmitAcknowledgement
+### MsgSubmitRemoteTranction
 
 ```proto
-message MsgSubmitAcknowledgement {
+message MsgSubmitRemoteTranction {
   option (cosmos.msg.v1.signer) = "sender";
-  option (amino.name)           = "cosmos-sdk/v1/MsgSubmitAcknowledgement";
+  option (amino.name)           = "cosmos-sdk/v1/MsgSubmitRemoteTranction";
 
-  string request_id = 1;
+  string channel_id = 1;
+  string direction = 2;  // In or Out
   u64: height;
   any transaction = 2;
   string proof = 3;
