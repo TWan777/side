@@ -32,6 +32,76 @@ function lookupApp(channelId: Identifier) {
 
 ### Transaction Handler
 
-**Inbound Transaction Lifescope Manager**
+**Life Scope of Inbound Transaction**:
+
+ - Registered: The IntentRequest is registered on the controller chain.
+```ts
+function registerInboundTranasction(channel_id: string, app_id: string, tx: byte[]) {
+
+}
+```   
+ - Executed: The transaction has been executed on the remote chain, and the result is synced to the controller chain by a relayer.
+```ts
+function onInboundExecuted(channel_id: string, app_id: string, request: IntentRequest) {
+
+}
+```  
+ - Confirmed: The transaction has passed validation by the light client on the controller chain.
+```ts
+function onInboundConfirmed(channel_id: string, app_id: string, request: IntentRequest) {
+
+}
+```  
+ - Finalized: The transaction has been finalized on the controller chain.
+```ts
+function onInboundFinalized(channel_id: string, app_id: string, request: IntentRequest) {
+
+}
+```  
+ - Expired: An IntentRequest that hasn't received the corresponding inbound transaction within a fixed window.
+```ts
+function onInboundExpired(channel_id: string, app_id: string, request: IntentRequest) {
+
+}
+```
+
+Life Scope of Outbound Transaction:
+
+ - Initiated: A SigningRequest is created by a transaction on the controller chain.
+```ts
+function registerOutboundSigningRequest(channel_id: string, app_id: string, tx: byte[]) {
+
+}
+```  
+ - Signed: The transaction has been signed by the TSS network.
+```ts
+function onOutboundSigned(channel_id: string, app_id: string, request: SigningRequest) {
+
+}
+```  
+ - Broadcasted: The transaction has been written to a relay queue for broadcasting.
+```ts
+function onOutboundBroadcasted(channel_id: string, app_id: string, request: SigningRequest) {
+
+}
+```  
+ - Executed: The transaction has been executed on the remote chain, and the result is synced to the controller chain by a relayer.
+```ts
+function onOutboundExecuted(channel_id: string, app_id: string, request: SigningRequest) {
+
+}
+```  
+ - Confirmed: The transaction has passed validation by the light client on the controller chain.
+```ts
+function onOutboundconfirmed(channel_id: string, app_id: string, request: SigningRequest) {
+
+}
+```  
+ - Finalized: The transaction has been finalized on the controller chain.
+```ts
+function onOutboundFinalized(channel_id: string, app_id: string, request: SigningRequest) {
+
+}
+```  
 
 
