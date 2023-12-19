@@ -19,3 +19,19 @@ All functions provided by the CCA handler interface are defined as in Baseapp.
  - Apps should seamlessly bind to channels and take ownership through the routing module.
  - The routing module should introduce no additional overhead for transaction sends and receives, except for the layer of call indirection.
  - The routing module must invoke specified handler functions on the app precisely when needed to act upon packets.
+
+## Technical Specification
+
+### Lookup Application
+
+```ts
+function lookupApp(channelId: Identifier) {
+    return privateStore.get(callbackPath(channelId))
+}
+```
+
+### Transaction Handler
+
+**Inbound Transaction Lifescope Manager**
+
+
