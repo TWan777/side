@@ -10,7 +10,7 @@ To facilitate the connection of CCA applications with multiple blockchains, CCA 
 
 ```ts
 interface TxAdapter {
-    function toRemoteTx(chainId: string, request: SignningRequest);
+    toRemoteTx(chainId: string, request: SignningRequest);
 }
 ```
 
