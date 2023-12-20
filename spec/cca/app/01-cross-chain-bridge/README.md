@@ -13,3 +13,21 @@ Similar to many other bridge solutions, we wrap bridged assets into pegged asset
 ## Technical Specification
 ### Transaction Flow 
 ![flow](./bridge_workflow.png)
+
+### Data Structure
+
+DepositRequest
+
+```ts
+interface DepositRequest {
+
+}
+```
+
+WithdrawRequest
+
+```ts
+interface WithdrawRequest {
+
+}
+```
