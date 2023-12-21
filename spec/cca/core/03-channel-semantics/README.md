@@ -5,15 +5,15 @@ A channel functions as a conduit for interchain operations between a designated 
 ## Data Structure
 ```ts
 interface Channel {
+   id: string;
    // specific which client is used for verification of inbound transaction. 
-   client_id: string;
-   vault_address: string;
-   app_id: string;
+   clientId: string;
+   vaultAddress: string;
+   appId: string;
    // verify if this transaction is included in the external chain.
    function verify(txHash: string, proof: byte[]);
 }
 ```
-
 
 To prevent replay attacks, the states of both `IntentRequest` and `SigningRequest` transactions must be stored on the controller chain.
 
