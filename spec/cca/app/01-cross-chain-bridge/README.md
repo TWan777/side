@@ -37,14 +37,6 @@ const Record<string, Record<ChainType, object>> txRegistry = {
 
 DepositRequest
 ```ts
-interface DepositTxAdapter {
-    key: "Send",
-    toRemoteTx(chain: ChainType): byte[] {
-        const mosatxRegistry[]
-    },
-}
-```
-```ts
 interface DepositRequest extends IntentRequest{
 
 }
@@ -53,6 +45,13 @@ interface DepositRequest extends IntentRequest{
 WithdrawRequest
 
 ```ts
+interface WithdrawTxAdapter {
+    key: "Send",
+    toRemoteTx(chain: ChainType): byte[] {
+        const tx = txRegistry[this.key][chain];
+        // assign request value to tx. 
+    },
+}
 interface WithdrawRequest extends SigningRequest{
     adapter: WithdrawTxAdapter;
 }
