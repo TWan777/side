@@ -57,13 +57,6 @@ interface WithdrawRequest extends SigningRequest{
 }
 ```
 
-   channelId: string,
-   action: string,  // can be defined in app, such as AtomicSwap, LSD
-   hash: string,
-   status: Enum,
-   outboundTx: bytes[],
-   createAt: u64,
-
 ### Messages
 
 MsgWithdrawRequest
@@ -75,7 +68,7 @@ MsgWithdrawRequest
 
 ```ts
 function registerInboundTranasction(channelId: string, appId: string, tx: byte[]) {
-
+    const 
 }
 ```   
 ```ts
@@ -99,8 +92,11 @@ function onInboundExpired(request: IntentRequest) {
 ```
 
 ```ts
-function registerOutboundSigningRequest(channelId: string, appId: string, tx: byte[]) {
-
+function registerOutboundSigningRequest(msg: MsgWithdrawRequest) {
+    const adapter = registry.getAdapter(msg.channelId)
+    const channel = store.getChannel(msg.channelId)
+    const tx = adaper.toRemoteTx();
+    store.registerOutboundSigningRequest(msg.channelId, channel.appId, tx)
 }
 ```  
 ```ts
