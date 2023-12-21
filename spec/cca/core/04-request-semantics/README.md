@@ -8,7 +8,9 @@ A "Request" is an abstraction of CCA that defines a specific transaction for int
  - **Inbound Transaction** : A transaction initiated by users that involves interaction with the Cross Chain Account (CCA) on a remote blockchain.
  - **Outbound Transaction**: A transaction initiated based on users' IntentRequest on the controller chain. This request involves the TSS network for signing and execution on the remote chain.
 
-## Life Scope
+## Technical Specification
+
+### Life Scope
 
 **Life Scope of Inbound Transaction:**
 1. **Registered:** The IntentRequest is registered on the controller chain.
@@ -25,7 +27,7 @@ A "Request" is an abstraction of CCA that defines a specific transaction for int
 5. **Confirmed:** The transaction has passed validation by the light client on the controller chain.
 6. **Finalized:** The transaction has been finalized on the controller chain.
 
-## Data Structure
+### Data Structure
 
 To prevent replay attacks, the states of both `IntentRequest` and `SigningRequest` transactions must be stored on the controller chain.
 
