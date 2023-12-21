@@ -67,9 +67,9 @@ MsgWithdrawRequest
 ### Transaction Handler
 
 ```ts
-function registerInboundTranasction(channelId: string, appId: string, tx: byte[]) {
-    const 
-}
+// function registerInboundTranasction(channelId: string, appId: string, tx: byte[]) {
+//    const 
+//}
 ```   
 ```ts
 function onInboundExecuted(request: IntentRequest) {
