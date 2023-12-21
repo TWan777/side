@@ -68,4 +68,64 @@ interface WithdrawRequest extends SigningRequest{
 
 MsgWithdrawRequest
 
+### MessageHandler
+
+
+### Transaction Handler
+
+```ts
+function registerInboundTranasction(channelId: string, appId: string, tx: byte[]) {
+
+}
+```   
+```ts
+function onInboundExecuted(request: IntentRequest) {
+}
+```  
+```ts
+function onInboundConfirmed(request: IntentRequest) {
+
+}
+```  
+```ts
+function onInboundFinalized(request: IntentRequest) {
+
+}
+```  
+```ts
+function onInboundExpired(request: IntentRequest) {
+
+}
+```
+
+```ts
+function registerOutboundSigningRequest(channelId: string, appId: string, tx: byte[]) {
+
+}
+```  
+```ts
+function onOutboundSigned(request: SigningRequest) {
+
+}
+```  
+```ts
+function onOutboundBroadcasted(request: SigningRequest) {
+
+}
+```  
+```ts
+function onOutboundExecuted(request: SigningRequest) {
+
+}
+```  
+```ts
+function onOutboundConfirmed(request: SigningRequest) {
+
+}
+```  
+```ts
+function onOutboundFinalized(request: SigningRequest) {
+
+}
+```  
 
