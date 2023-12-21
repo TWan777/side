@@ -56,3 +56,16 @@ interface WithdrawRequest extends SigningRequest{
     adapter: WithdrawTxAdapter;
 }
 ```
+
+   channelId: string,
+   action: string,  // can be defined in app, such as AtomicSwap, LSD
+   hash: string,
+   status: Enum,
+   outboundTx: bytes[],
+   createAt: u64,
+
+### Messages
+
+MsgWithdrawRequest
+
+
