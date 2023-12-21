@@ -7,7 +7,10 @@ A channel functions as a conduit for interchain operations between a designated 
  - There should only exist one channel between a client and an application, identifiable by the hash of `clientId` and `appId`.
  - A channel can be closed via governance.
  - The primary purpose of a channel is to authenticate transactions.
-## Data Structure
+
+## Technical Specification
+
+### Data Structure
 ```ts
 interface Channel {
    id: string;
@@ -21,6 +24,6 @@ interface Channel {
 }
 ```
 
-## Messages
+### Messages
 
 Messages are defined in `CCA Core`
