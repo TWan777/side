@@ -1,9 +1,10 @@
 # Request
 
-Request is an abstract of CCA that defines a specific transaction to be interact with CCA on remote chain. 
+A "Request" is an abstraction of CCA that defines a specific transaction for interaction with CCA on a remote chain. Based on its direction between the controller chain and remote chain, there are two types of requests: `IntentRequest` and `SigningRequest`.
 
 ## Definition
-
+ - **IntentRequest**: An IntentRequest is created on the controller chain, initiating an intent for the sender to interact with CCA on the remote chain.
+ - **SigningRequest**: A SigningRequest is initiated on the controller chain, prompting the CCA owner (TSS network) to sign a transaction for execution on the remote chain.
  - **Inbound Transaction** : A transaction initiated by users that involves interaction with the Cross Chain Account (CCA) on a remote blockchain.
  - **Outbound Transaction**: A transaction initiated based on users' IntentRequest on the controller chain. This request involves the TSS network for signing and execution on the remote chain.
 
