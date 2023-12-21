@@ -57,6 +57,25 @@ message MsgCreateLightClient {
 > **NOTE**
 > This message can only be executed when a proposal is passed.
 
+### MsgUpdateClient
+
+```proto
+message MsgUpdateClient {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name)           = "cosmos-sdk/v1/MsgUpdateClient";
+
+  string client_id = 1;
+  Header header = 2;
+  repeated string[] validators = 3;
+}
+```
+
+Message handling should fail if:
+
+- The provided `height` of the header is less than the `height` of `latestHeader` of the client.
+- The provided `client_id` does not exist.
+- `client.verify(header: Header)` returns `false`.
+
 ### MsgCreateChannel
 ```proto
 message MsgCreateChannel {
@@ -83,25 +102,21 @@ Message handling should fail if:
 - The provided `client_id` does not exist.
 - The provided `hd_path` has been used in another channel.
 
-### MsgUpdateClient
-
+### MsgCloseChannel
 ```proto
-message MsgUpdateClient {
-  option (cosmos.msg.v1.signer) = "sender";
-  option (amino.name)           = "cosmos-sdk/v1/MsgUpdateClient";
+message MsgCloseChannel {
+  option (cosmos.msg.v1.signer) = "proposer";
+  option (amino.name)           = "cosmos-sdk/v1/MsgCloseChannel";
 
-  string client_id = 1;
-  Header header = 2;
-  repeated string[] validators = 3;
+  string id = 1;
+  string status =2;
 }
 ```
 
 Message handling should fail if:
 
-- The provided `height` of the header is less than the `height` of `latestHeader` of the client.
-- The provided `client_id` does not exist.
-- `client.verify(header: Header)` returns `false`.
-
+- The provided `id` does not exist.
+  
 ### MsgSubmitSignature
 
 ```proto
