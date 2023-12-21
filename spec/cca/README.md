@@ -19,7 +19,7 @@ This specification outlines a solution enabling users to manage crosschain asset
  - `State Ledger` is a ledger that stores all interaction transactions with the `CCA` on the remote blockchains.
  - `Controller Chain` is a central blockchain, such as SIDE chain, which hosts the ledgers and coordinates the TSS network for signing.
 
-## references 
+## References 
  - [THORChain-Whitepaper-May2020](https://github.com/thorchain/Resources/blob/master/Whitepapers/THORChain-Whitepaper-May2020.pdf)
  - [Binance Open-Sources Threshold Signature Scheme Library
 ](https://www.binance.com/en/blog/all/binance-opensources-threshold-signature-scheme-library-398654406137536512)
