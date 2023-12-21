@@ -11,7 +11,7 @@ To facilitate the connection of CCA applications with multiple blockchains, CCA 
 ```ts
 interface TxAdapter {
     toRemoteTx(chainType: ClientType, request: SignningRequest);
-    verifyInboundTransaction(request: IntentRequest, tx: InboundTransaction): bool;
+    verifyInboundTransaction(request: IntentRequest, tx: byte[]): bool;
 }
 ```
 
