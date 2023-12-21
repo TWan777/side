@@ -10,9 +10,13 @@ The light client on the SIDE blockchain is responsible for verifying that a inbo
 
  - `Client State`
 ```ts
+enum ClientType {
+   Bitcoin,
+   Ethereum,
+}
 interface ClientState {
    chainId: string,
-   type: string,
+   type: ClientType,
    latestHeader: Header,
    comfirmation: u64,
    frozen: bool,
