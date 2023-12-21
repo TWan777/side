@@ -21,3 +21,6 @@ interface Channel {
 }
 ```
 
+## Messages
+
+Messages are defined in `CCA Core`
