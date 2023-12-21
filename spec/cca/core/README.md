@@ -21,9 +21,9 @@ Channel is mainly composed of id, clientId, appId, externalChainId, vaultAddress
    
 Requests are created within specific modules to implement their unique business logic. There are two types of requests: `<Intent>Request` and `SigningRequest`.
 
-Telebase Core is responsible for monitoring the execution of `<Intent>Request`, facilitating transactions that interoperate with the vault on an counterparty chain, and notifying the states to the specific sub app.
+`CCA Core` is responsible for monitoring the execution of `<Intent>Request`, facilitating transactions that interoperate with the vault on an counterparty chain, and notifying the states to the specific sub app.
 
-Telebase Core also handles the acceptance and verification of signatures in `SigningRequest`, tracing the execution result on the counterparty chain.
+`CCA Core` also handles the acceptance and verification of signatures in `SigningRequest`, tracing the execution result on the counterparty chain.
 
 - Request: 0x03 | RequestId | -> ProtocolBuffer(Request)
 
