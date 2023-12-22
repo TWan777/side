@@ -100,7 +100,4 @@ class DefaultEthereumResponseAdapter<State> extends TxResponseAdapter<EthereumTx
     };
 }
 
-const TX_RESPONSE_REGISTRY: Record<ChainType, TxAdapter> = {
-    Ethereum: new DefaultEthereumResponseAdapter();
-}
 ```

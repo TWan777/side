@@ -27,6 +27,18 @@ interface Deposit {
     u64: completedAt,
 }
 ```
+- Deposit: 0x01 | sender | desired_sender | channelId  -> ProtocolBuffer(Deposit)
+
+```ts
+interface DenomTrace {
+    string channelId,
+    string vaultAddress,
+    string denom,
+}
+```
+- Deposit: 0x02 | channelId | vaultAddress | denom  -> ProtocolBuffer(DenomTrace)
+
+
 
 ```ts
 class DepositEthereumResposne extends DefaultEthereumResponseAdapter<Deposit> {
@@ -39,7 +51,6 @@ class DepositEthereumResposne extends DefaultEthereumResponseAdapter<Deposit> {
 }
 ```
 
-- Deposit: 0x01 | sender | desired_sender | channelId  -> ProtocolBuffer(Deposit)
 
 ### Messages
 ```proto
