@@ -7,6 +7,16 @@ To facilitate the connection of CCA applications with multiple blockchains, CCA 
 ## Technical Specification
 
 ### Data Structures
+```ts
+interface EthereumTx {
+    from: string,
+    to: string,
+    gas: string, // 30400,
+    gasPrice: string, // 10000000000000
+    value: string, // 2441406250
+    data: string"
+}
+```
 
 ```ts
 interface TxAdapter {
