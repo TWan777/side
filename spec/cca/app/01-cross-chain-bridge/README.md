@@ -146,6 +146,13 @@ function onInboundFinalized(request: IntentRequest) {
     bank.mintToken(voucherToken)
     bank.sendToken(moduleAddress, deposit.sender, voucherToken)
 
+    // save denom trace
+    store.save(denom, {
+       channelId: channel.id,
+       vaultAddress: channel.vaultAddress,
+       denom: deposit.token.denom,
+    })
+
 }
 ```
 ```ts
@@ -156,6 +163,8 @@ function onInboundExpired(request: IntentRequest) {
 
 ```ts
 function onOutboundSigned(request: SigningRequest) {
+    // Burn voucher tokens
+    bank.burnToken(request.token)
 
 }
 ```
