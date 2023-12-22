@@ -11,36 +11,33 @@ Similar to many other bridge solutions, we wrap bridged assets into pegged asset
  - A `WithdrawRequest` is a specialized type of `SigningRequest` that involves burning voucher tokens. It initiates a request to the TSS network to sign a transfer transaction on the remote chain, allowing users to withdraw their locked native tokens from the remote chain.
 
 ## Technical Specification
-### Transaction Flow 
+### Transaction Flow
 ![flow](./bridge_workflow.png)
 
 ### Data Structure
 
-DepositRequest
 ```ts
-interface DepositRequest extends IntentRequest{
-
-}
-```
-
-WithdrawRequest
-
-```ts
-interface WithdrawTxAdapter {
-    toRemoteTx(chain: ChainType): byte[] {
-        const tx = txRegistry[this.key][chain];
-        // assign request value to tx. 
-    },
-}
-interface WithdrawRequest extends SigningRequest{
-    adapter: WithdrawTxAdapter;
+interface Deposit {
+    string sender, //local sender
+    string desired_sender, // remote sender
+    Coin token,
+    string channelId,
+    string status,
+    u64: createdAt,
+    u64: completedAt,
 }
 ```
 
 ### Messages
-
 ```proto
-message MsgWithdrawRequest {
+message MsgDeposit {
+    string desired_sender = 1;
+    Coin token = 2;
+    string channelId = 3;
+}
+```
+```proto
+message MsgWithdraw {
     string recipient = 1;
     Coin token = 2;
     string channelId = 3;
@@ -48,28 +45,76 @@ message MsgWithdrawRequest {
 ```
 ### MessageHandler
 
+```ts
+function handleMsgDeposit(msg: MsgDeposit) {
+
+    // process request
+    const request: IntentRequest  = {
+        channelId: msg.channelId,
+        action: "Deposit",
+        expectedSender: msg.desired_sender, // the expected sender of inboundTx on counterparty chain
+        hash: "",
+        status: "INITIATED",
+        inboundTx: [],
+        createAt: block.timestamp,
+    }
+
+    store.registerInboundSigningRequest(request)
+
+    cosnt deposit = {
+        sender: msg.sender,
+        desired_sender: msg.desired_sender, // remote sender
+        token: msg.token,
+        channelId: msg.channeId,
+        status: "INITIATED",
+        createdAt: block.timestamp,
+        completedAt: 0,
+    }
+    store.save(deposit)
+}
+```
+
+```ts
+function handleMsgWithdraw(msg: MsgWithdraw) {
+    const channel = store.getChannel(msg.channelId)
+    const adapter = ADAPTOR_REGISTRY.getAdapter(msg.channelId)
+
+    // naming check
+    const tokenMeta = store.getTokenMeta(msg.token.denom)
+    if (msg.token.denom !== hash(`${channel.id}/${channel.vaultAddress}/${tokenMeta.denom}`)) {
+        throw new Error("Can not withdraw the tokens")
+    }
+    // convert voucher coin to remote tokens
+    // TODO: process ERC20 later
+    const value = parseInt(msg.token.amount)
+    const data = ""
+    store.registerOutboundSigningRequest(adapter.buildSigningRequest(
+        "WITHDRAW", channel, msg.recipient, value, data
+    ))
+}
+```
 
 ### Transaction Handler
 
 ```ts
 // function registerInboundTranasction(channelId: string, appId: string, tx: byte[]) {
-//    const 
+//    const
 //}
-```   
+```
 ```ts
 function onInboundExecuted(request: IntentRequest) {
 }
-```  
+```
 ```ts
 function onInboundConfirmed(request: IntentRequest) {
 
 }
-```  
+```
 ```ts
 function onInboundFinalized(request: IntentRequest) {
 
 }
-```  
+```
 ```ts
 function onInboundExpired(request: IntentRequest) {
 
@@ -77,36 +122,28 @@ function onInboundExpired(request: IntentRequest) {
 ```
 
 ```ts
-function registerOutboundSigningRequest(msg: MsgWithdrawRequest) {
-    const adapter = registry.getAdapter(msg.channelId)
-    const channel = store.getChannel(msg.channelId)
-    const tx = adaper.toRemoteTx();
-    store.registerOutboundSigningRequest(msg.channelId, channel.appId, tx)
-}
-```  
-```ts
 function onOutboundSigned(request: SigningRequest) {
 
 }
-```  
+```
 ```ts
 function onOutboundBroadcasted(request: SigningRequest) {
 
 }
-```  
+```
 ```ts
 function onOutboundExecuted(request: SigningRequest) {
 
 }
-```  
+```
 ```ts
 function onOutboundConfirmed(request: SigningRequest) {
 
 }
-```  
+```
 ```ts
 function onOutboundFinalized(request: SigningRequest) {
 
 }
-```  
+```
 

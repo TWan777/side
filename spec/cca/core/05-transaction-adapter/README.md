@@ -44,8 +44,34 @@ interface EthereumTxResponse {
 
 ```ts
 interface TxAdapter {
-    toRemoteTx(chainType: ClientType, request: SignningRequest);
+    buildSigningRequest(chainType: ClientType, request: SignningRequest);
     verifyInboundTransaction(request: IntentRequest, tx: byte[]): bool;
+}
+
+class DefaultEthereumAdapter {
+    buildSigningRequest(action: string, channel: Channel, recipient: string, value: string, data: string): SignningRequest {
+        const tx = {
+            from: channel.getVaultAddress(),
+            to: recipient,
+            gas: channel.getDefaultGas(),
+            gasPrice: channel.getDefaultGasPrice(),
+            value,
+            data,
+        }
+        return {
+            channelId: channel.id,
+            action, // can be defined in app, such as AtomicSwap, LSD
+            hash: hash(tx),
+            status: "CREATED",
+            outboundTx: hex(tx),
+            createAt: block.timestamp,
+        }
+
+    }
+}
+
+const ADAPTOR_REGISTRY: Record<ChainType, TxAdapter> = {
+    Ethereum: new DefaultEthereumAdapter();
 }
 ```
 
