@@ -28,6 +28,19 @@ interface Deposit {
 }
 ```
 
+```ts
+class DepositEthereumResposne extends DefaultEthereumResponseAdapter<Deposit> {
+    verify() {
+        if (super.verify()) return false;
+        // check ERC20 tokens later
+        if(this.txResponse.value !== this.state.token.amount) return false
+        return true;
+    }
+}
+```
+
+- Deposit: 0x01 | sender | desired_sender | channelId  -> ProtocolBuffer(Deposit)
+
 ### Messages
 ```proto
 message MsgDeposit {
@@ -77,7 +90,7 @@ function handleMsgDeposit(msg: MsgDeposit) {
 ```ts
 function handleMsgWithdraw(msg: MsgWithdraw) {
     const channel = store.getChannel(msg.channelId)
-    const adapter = ADAPTOR_REGISTRY.getAdapter(msg.channelId)
+    const adapter = TX_REGISTRY.getAdapter(msg.channelId)
 
     // naming check
     const tokenMeta = store.getTokenMeta(msg.token.denom)
@@ -97,11 +110,6 @@ function handleMsgWithdraw(msg: MsgWithdraw) {
 ### Transaction Handler
 
 ```ts
-// function registerInboundTranasction(channelId: string, appId: string, tx: byte[]) {
-//    const
-//}
-```
-```ts
 function onInboundExecuted(request: IntentRequest) {
 }
 ```
@@ -112,6 +120,20 @@ function onInboundConfirmed(request: IntentRequest) {
 ```
 ```ts
 function onInboundFinalized(request: IntentRequest) {
+
+    const key = `0x01|${request.sender}|${request.desired_sender}|${request.channelId}`
+    const deposit = store.getDeposit(key)
+    const channel = store.getChannel(request.channelId)
+
+    const adapter = new DepositEthereumResposne(request, channel,  deposit)
+    const ok = adapter.verify()
+    if(!ok) return
+
+    // Mint voucher tokens
+    const denom = hash(`${channel.id}/${channel.vaultAddress}/${deposit.token.denom}`);
+    const voucherToken = new Coin(deposit.token.amount, denom);
+    bank.mintToken(voucherToken)
+    bank.sendToken(moduleAddress, deposit.sender, voucherToken)
 
 }
 ```
