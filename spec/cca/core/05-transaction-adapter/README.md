@@ -14,7 +14,31 @@ interface EthereumTx {
     gas: string, // 30400,
     gasPrice: string, // 10000000000000
     value: string, // 2441406250
-    data: string"
+    data: string,
+}
+
+interface EthereumTxResponse {
+    hash : string,
+    nonce: u32,
+    block_hash : string,
+    block_number:u64,
+    transaction_index UInt16,
+    from_address : string,
+    to_address : string,
+    value:u64,
+    gas:u64,
+    gas_price:u64,
+    input : string,
+    block_timestamp:u64,
+    max_fee_per_gas:u64,
+    max_priority_fee_per_gas:u64,
+    transaction_type u8,
+    receipt_cumulative_gas_used: u32,
+    receipt_gas_used: u32,
+    receipt_contract_address : string,
+    receipt_root : string,
+    receipt_status u8,
+    receipt_effective_gas_price:u64
 }
 ```
 
