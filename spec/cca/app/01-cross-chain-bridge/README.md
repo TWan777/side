@@ -18,22 +18,22 @@ Similar to many other bridge solutions, we wrap bridged assets into pegged asset
 
 ```ts
 interface Deposit {
-    string sender, //local sender
-    string desired_sender, // remote sender
-    Coin token,
-    string channelId,
-    string status,
-    u64: createdAt,
-    u64: completedAt,
+    sender: string, //local sender
+    desired_sender: string, // remote sender
+    token: Coin,
+    channelId: string,
+    status: string,
+    createdAt: u64,
+    completedAt: u64,
 }
 ```
 - Deposit: 0x01 | sender | desired_sender | channelId  -> ProtocolBuffer(Deposit)
 
 ```ts
 interface DenomTrace {
-    string channelId,
-    string vaultAddress,
-    string denom,
+    channelId: string,
+    vaultAddress: string,
+    denom: string,
 }
 ```
 - Deposit: 0x02 | channelId | vaultAddress | denom  -> ProtocolBuffer(DenomTrace)
