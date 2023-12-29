@@ -6,3 +6,4 @@ In this app, the vault is a contract controlled by the TSS network.
 
 #### Transaction Flow
 ![flow](./liquid_staking_workflow.png)
+

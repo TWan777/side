@@ -120,6 +120,7 @@ function handleMsgCreatePool(msg: MsgCreatePool) {
         } else {
             // request remote deposit
             const request: IntentRequest  = {
+                sender: msg.sender,
                 channelId: t.channelId,
                 action: "CreatePool",
                 expectedSender: t.desired_sender, // the expected sender of inboundTx on
@@ -173,13 +174,25 @@ function handleMsgSingleDeposit(msg: MsgSingleDeposit) {
     // process request
     if(isNativeToken(msg.token)) {
         // lock assets on escrowed account
-        bank.sendTokenToModule(msg.sender, Module_Name, msg.token)
+        let pool = getPool(msg.poolId)
+        let escrowedAddress = getEscrowedAccount(`${AppName}/${msg.poolId}`)
+        bank.sendTokenToAccount(msg.sender, escrowedAddress, t.token)
+        let supplyAmount = calculateInitialSupply(msg.tokens);
+        let supplyToken = new Coin(supplyAmount, pool.supply.denom);
+        if(supplyAmount > 0) {
+            // if tokens are native, pool will created in the handler.
+            // otherwise, pool will created when the remoted deposited is finalised.
+            bank.mint(ModuleName, supplyToken);
+            bank.sendTokenFromModuleToAccount(ModuleName, msg.sender, supplyToken);
+        }
     } else {
         // request remote deposit
         const request: IntentRequest  = {
+            sender: msg.sender,
             channelId: msg.channelId,
             action: "SingleDeposit",
-            expectedSender: msg.desired_sender, // the expected sender of inboundTx on counterparty chain
+            expectedSender: msg.desired_sender, // the expected sender of inboundTx on
+            expectedReceivedToken: msg.token,
             hash: "",
             status: "INITIATED",
             inboundTx: [],
@@ -188,17 +201,6 @@ function handleMsgSingleDeposit(msg: MsgSingleDeposit) {
 
         store.registerInboundSigningRequest(request)
     }
-
-    cosnt deposit = {
-        sender: msg.sender,
-        desired_sender: msg.desired_sender, // remote sender
-        token: msg.token,
-        channelId: msg.channeId,
-        status: "INITIATED",
-        createdAt: block.timestamp,
-        completedAt: 0,
-    }
-    store.save(deposit)
 }
 
 function handleMsgMultiDeposit(msg: MsgMultiDeposit) {
@@ -291,7 +293,7 @@ function onInboundFinalized(request: IntentRequest) {
     if(request.action === 'CreatePool') {
 
         let pool = store.findPoolbyId(request.referenceId);
-        for(t in pool.tokens) {
+        for(t in pool.assets) {
             if(t.balance.denom === request.expectedReceivedToken.denom) {
                 t.amount = request.expectedReceivedToken.amount
             }
@@ -308,9 +310,28 @@ function onInboundFinalized(request: IntentRequest) {
             let supplyToken = new Coin(supplyAmount, supplyToken);
             // send pool token to the sender
             bank.mint(ModuleName, supplyToken);
-            bank.sendTokenFromModuleToAccount(ModuleName, pool.creator, supplyToken);
+            bank.sendTokenFromModuleToAccount(ModuleName, request.sender, supplyToken);
+            pool.status = 'Ready'
         }
 
+        store.save(pool)
+    } else if (request.action === 'SingleDeposit') {
+        let pool = store.getPool(request.referenceId)
+        let newSupplyAmount = calculateSupply(pool, request.ExpectedReceivedToken);
+        let newSupplyToken = new Coin(newSupplyAmount, pool.supply.denom);
+        if(newSupplyAmount > 0) {
+            // if tokens are native, pool will created in the handler.
+            // otherwise, pool will created when the remoted deposited is finalised.
+            bank.mint(ModuleName, newSupplyToken);
+            bank.sendTokenFromModuleToAccount(ModuleName, msg.sender, newSupplyToken);
+        }
+        // update pool states
+        for(t in pool.assets) {
+            if(t.balance.denom === request.expectedReceivedToken.denom) {
+                t.amount += request.expectedReceivedToken.amount
+            }
+        }
+        pool.supply.amount += newSupplyAmount
         store.save(pool)
     }
 

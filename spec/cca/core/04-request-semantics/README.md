@@ -33,7 +33,9 @@ To prevent replay attacks, the states of both `IntentRequest` and `SigningReques
 
 ```ts
 interface IntentRequest {
-   channelId: string
+   sequence: u64, // start from 1
+   sender: string,
+   channelId: string,
    action: string,
    expectedSender: string, // the expected sender of inboundTx on counterparty chain
    expectedReceivedToken: Coin,
