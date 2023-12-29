@@ -47,8 +47,11 @@ interface IntentRequest {
 }
 
 interface SigningRequest {
+   sequence: u64,
+   sender: string,
    channelId: string,
    action: string,  // can be defined in app, such as AtomicSwap, LSD
+   referenceId: string,
    hash: string,
    status: Enum,
    outboundTx: bytes[],

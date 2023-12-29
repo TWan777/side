@@ -3,13 +3,16 @@
 The Cross Chain Liquidity is a CCA app that establishes a cross-chain liquidity pool, enabling users to swap tokens within the pool without the need for transferring tokens between different chains.
 
 ## Technical Specification
+
 ### Transaction Flow
+
 ![flow](./cross_chain_liquidity_workflow.png)
 
 ### Data Structure
+
 ```ts
 interface PoolAsset {
-  channelId: string;  // native or channel_id
+  channelId: string; // native or channel_id
   balance: Coin;
   // percentage: 50 for 50%
   weight: int32;
@@ -29,30 +32,40 @@ interface WeightedPool {
 
 interface Deposit {
     sender: string, // local sender
-    desired_sender: string, // remote sender
+    poolId: string,
+    token: Coin[],
+    requestId: string,
+    status: string,
+    createdAt: u64,
+    completedAt: u64,
+}
+
+interface Withdraw {
+    sender: string, // local sender
+    poolId: string,
     token: Coin,
-    channelId: string,
+    requestId: string,
     status: string,
     createdAt: u64,
     completedAt: u64,
 }
 ```
-- Deposit: 0x01 | sender | desired_sender | channelId  -> ProtocolBuffer(Deposit)
 
+- Deposit: 0x01 | sender | desired_sender | channelId -> ProtocolBuffer(Deposit)
 
 ```ts
 class DepositEthereumResposne extends DefaultEthereumResponseAdapter<Deposit> {
-    verify() {
-        if (super.verify()) return false;
-        // check ERC20 tokens later
-        if(this.txResponse.value !== this.state.token.amount) return false
-        return true;
-    }
+  verify() {
+    if (super.verify()) return false;
+    // check ERC20 tokens later
+    if (this.txResponse.value !== this.state.token.amount) return false;
+    return true;
+  }
 }
 ```
 
-
 ### Messages
+
 ```proto
 message PoolToken {
     string channelId = 1;
@@ -66,6 +79,7 @@ message MsgCreatePool {
     repeated PoolToken tokens = 2;
 }
 ```
+
 ```proto
 message MsgMultiDeposit {
     string desiredSender = 1;
@@ -80,6 +94,7 @@ message MsgSingleDeposit {
     string channelId = 4;
 }
 ```
+
 ```proto
 message MsgWithdraw {
     string recipient = 1;
@@ -88,6 +103,7 @@ message MsgWithdraw {
     string channelId = 4;
 }
 ```
+
 ```proto
 message MsgSwap {
     string channelId = 1;
@@ -98,6 +114,7 @@ message MsgSwap {
     u64 slippage = 6;
 }
 ```
+
 ### MessageHandler
 
 ```ts
@@ -233,140 +250,170 @@ function handleMsgMultiDeposit(msg: MsgMultiDeposit) {
 
 ```ts
 function handleMsgWithdraw(msg: MsgWithdraw) {
-    const channel = store.getChannel(msg.channelId)
-    const adapter = TX_REGISTRY.getAdapter(msg.channelId)
 
-    // naming check
-    const tokenMeta = store.getTokenMeta(msg.token.denom)
-    if (msg.token.denom !== hash(`${channel.id}/${channel.vaultAddress}/${tokenMeta.denom}`)) {
-        throw new Error("Can not withdraw the tokens")
+    abortTransactionUnless(msg.token.amount > 0)
+
+    let channel = store.getChannel(msg.channelId);
+    let adapter = TX_REGISTRY.getAdapter(msg.channelId);
+    let pool = store.getPool(msg.poolId)
+    abortTransactionUnless(pool.supply.denom === msg.token.denom)
+
+    let escrowedAddress = getEscrowedAccount(`${AppName}/${poolId}`)
+    bank.sendTokenToAccount(msg.sender, escrowedAddress, t.token)
+
+    let requestId = store.registerOutboundSigningRequest(
+        adapter.buildSigningRequest("WITHDRAW", channel, msg.recipient, msg.token)
+    );
+
+    let newWithdraw = {
+        sender: msg.sender, // local sender
+        poolId: msg.poolId,
+        token: msg.token,
+        requestId,
+        status: "Initial",
+        createdAt: block.timestamp,
+        completedAt: 0,
     }
-    // convert voucher coin to remote tokens
-    // TODO: process ERC20 later
-    const value = parseInt(msg.token.amount)
-    const data = ""
-    store.registerOutboundSigningRequest(adapter.buildSigningRequest(
-        "WITHDRAW", channel, msg.recipient, value, data
-    ))
+    store.save(newWithdraw)
 }
 ```
 
 ```ts
 function handleMsgSwap(msg: MsgWithdraw) {
-    const channel = store.getChannel(msg.channelId)
-    const adapter = TX_REGISTRY.getAdapter(msg.channelId)
+  const channel = store.getChannel(msg.channelId);
+  const adapter = TX_REGISTRY.getAdapter(msg.channelId);
 
-    // naming check
-    const tokenMeta = store.getTokenMeta(msg.token.denom)
-    if (msg.token.denom !== hash(`${channel.id}/${channel.vaultAddress}/${tokenMeta.denom}`)) {
-        throw new Error("Can not withdraw the tokens")
-    }
-    // convert voucher coin to remote tokens
-    // TODO: process ERC20 later
-    const value = parseInt(msg.token.amount)
-    const data = ""
-    store.registerOutboundSigningRequest(adapter.buildSigningRequest(
-        "WITHDRAW", channel, msg.recipient, value, data
-    ))
+  // naming check
+  const tokenMeta = store.getTokenMeta(msg.token.denom);
+  if (
+    msg.token.denom !==
+    hash(`${channel.id}/${channel.vaultAddress}/${tokenMeta.denom}`)
+  ) {
+    throw new Error("Can not withdraw the tokens");
+  }
+  // convert voucher coin to remote tokens
+  // TODO: process ERC20 later
+  const value = parseInt(msg.token.amount);
+  const data = "";
+  store.registerOutboundSigningRequest(
+    adapter.buildSigningRequest("WITHDRAW", channel, msg.recipient, value, data)
+  );
 }
 ```
+
 ### Transaction Handler
 
 ```ts
-function onInboundExecuted(request: IntentRequest) {
-}
+function onInboundExecuted(request: IntentRequest) {}
 ```
-```ts
-function onInboundConfirmed(request: IntentRequest) {
 
-}
+```ts
+function onInboundConfirmed(request: IntentRequest) {}
 ```
+
 ```ts
 function onInboundFinalized(request: IntentRequest) {
+  const channel = store.getChannel(request.channelId);
+  const adapter = new DepositEthereumResposne(request, channel, deposit);
+  const ok = adapter.verify();
+  if (!ok) return;
 
-    const channel = store.getChannel(request.channelId)
-    const adapter = new DepositEthereumResposne(request, channel,  deposit)
-    const ok = adapter.verify()
-    if(!ok) return
-
-    // Mint voucher tokens
-    if(request.action === 'CreatePool') {
-
-        let pool = store.findPoolbyId(request.referenceId);
-        for(t in pool.assets) {
-            if(t.balance.denom === request.expectedReceivedToken.denom) {
-                t.amount = request.expectedReceivedToken.amount
-            }
-        }
-        // check if deposit completed
-        let doneDeposited = true;
-        for(t in pool.assets) {
-            if(t.amount == 0) {
-                doneDeposited = false
-            }
-        }
-        if(doneDeposited) {
-            supplyAmount = calculateInitialSupply(pool.assets);
-            let supplyToken = new Coin(supplyAmount, supplyToken);
-            // send pool token to the sender
-            bank.mint(ModuleName, supplyToken);
-            bank.sendTokenFromModuleToAccount(ModuleName, request.sender, supplyToken);
-            pool.status = 'Ready'
-        }
-
-        store.save(pool)
-    } else if (request.action === 'SingleDeposit') {
-        let pool = store.getPool(request.referenceId)
-        let newSupplyAmount = calculateSupply(pool, request.ExpectedReceivedToken);
-        let newSupplyToken = new Coin(newSupplyAmount, pool.supply.denom);
-        if(newSupplyAmount > 0) {
-            // if tokens are native, pool will created in the handler.
-            // otherwise, pool will created when the remoted deposited is finalised.
-            bank.mint(ModuleName, newSupplyToken);
-            bank.sendTokenFromModuleToAccount(ModuleName, msg.sender, newSupplyToken);
-        }
-        // update pool states
-        for(t in pool.assets) {
-            if(t.balance.denom === request.expectedReceivedToken.denom) {
-                t.amount += request.expectedReceivedToken.amount
-            }
-        }
-        pool.supply.amount += newSupplyAmount
-        store.save(pool)
+  // Mint voucher tokens
+  if (request.action === "CreatePool") {
+    let pool = store.findPoolbyId(request.referenceId);
+    for (t in pool.assets) {
+      if (t.balance.denom === request.expectedReceivedToken.denom) {
+        t.amount = request.expectedReceivedToken.amount;
+      }
+    }
+    // check if deposit completed
+    let doneDeposited = true;
+    for (t in pool.assets) {
+      if (t.amount == 0) {
+        doneDeposited = false;
+      }
+    }
+    if (doneDeposited) {
+      supplyAmount = calculateInitialSupply(pool.assets);
+      let supplyToken = new Coin(supplyAmount, supplyToken);
+      // send pool token to the sender
+      bank.mint(ModuleName, supplyToken);
+      bank.sendTokenFromModuleToAccount(
+        ModuleName,
+        request.sender,
+        supplyToken
+      );
+      pool.status = "Ready";
     }
 
+    store.save(pool);
+  } else if (request.action === "SingleDeposit") {
+    let pool = store.getPool(request.referenceId);
+    let newSupplyAmount = calculateSupply(pool, request.ExpectedReceivedToken);
+    let newSupplyToken = new Coin(newSupplyAmount, pool.supply.denom);
+    if (newSupplyAmount > 0) {
+      // if tokens are native, pool will created in the handler.
+      // otherwise, pool will created when the remoted deposited is finalised.
+      bank.mint(ModuleName, newSupplyToken);
+      bank.sendTokenFromModuleToAccount(ModuleName, msg.sender, newSupplyToken);
+    }
+    // update pool states
+    for (t in pool.assets) {
+      if (t.balance.denom === request.expectedReceivedToken.denom) {
+        t.amount += request.expectedReceivedToken.amount;
+      }
+    }
+    pool.supply.amount += newSupplyAmount;
+    store.save(pool);
+  }
 }
 ```
-```ts
-function onInboundExpired(request: IntentRequest) {
 
-}
+```ts
+function onInboundExpired(request: IntentRequest) {}
 ```
 
 ```ts
 function onOutboundSigned(request: SigningRequest) {
-    // Burn voucher tokens
-    bank.burnToken(request.token)
+  if (request.action === "Withdraw") {
+    let withdraw = store.getWithdraw(request.referenceId);
+    let pool = store.getPool(withdraw.poolId)
+    let out = calculateOutToken( pool, withdraw.token );
+    // update pool states
+    for (t in pool.assets) {
+        for(o in out) {
+            if (t.balance.denom === o.denom) {
+                t.amount -= o.amount;
+            }
+        }
+    }
+    pool.supply.amount -= withdraw.token.amount;
+    store.save(pool);
 
+    withdraw.status = 'Executed'
+    store.save(withdraw)
+  }
 }
 ```
+
 ```ts
-function onOutboundBroadcasted(request: SigningRequest) {
-
-}
+function onOutboundBroadcasted(request: SigningRequest) {}
 ```
+
 ```ts
-function onOutboundExecuted(request: SigningRequest) {
-
-}
+function onOutboundExecuted(request: SigningRequest) {}
 ```
+
 ```ts
-function onOutboundConfirmed(request: SigningRequest) {
-
-}
+function onOutboundConfirmed(request: SigningRequest) {}
 ```
+
 ```ts
 function onOutboundFinalized(request: SigningRequest) {
-
+  if (request.action === "Withdraw") {
+    let withdraw = store.getWithdraw(request.referenceId);
+    withraw.status = 'Finalised'
+    store.save(withdraw)
+  }
 }
 ```
