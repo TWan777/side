@@ -37,6 +37,7 @@ interface IntentRequest {
    action: string,
    expectedSender: string, // the expected sender of inboundTx on counterparty chain
    hash: string,
+   referenceId: string,
    status: Enum,
    inboundTx: bytes[],
    createAt: u64,
