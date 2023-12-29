@@ -7,10 +7,27 @@ The Cross Chain Liquidity is a CCA app that establishes a cross-chain liquidity 
 ![flow](./cross_chain_liquidity_workflow.png)
 
 ### Data Structure
+```ts
+interface PoolAsset {
+  channelId: string;  // native or channel_id
+  balance: Coin;
+  // percentage: 50 for 50%
+  weight: int32;
+}
+```
 
 ```ts
+interface WeightedPool {
+  id: string;
+  assets: []PoolAsset;
+  swapFee: int32;
+  // the issued amount of pool token in the pool. the denom is pool id
+  supply: Coin;
+  status: PoolStatus;
+}
+
 interface Deposit {
-    sender: string, //local sender
+    sender: string, // local sender
     desired_sender: string, // remote sender
     token: Coin,
     channelId: string,
@@ -20,16 +37,6 @@ interface Deposit {
 }
 ```
 - Deposit: 0x01 | sender | desired_sender | channelId  -> ProtocolBuffer(Deposit)
-
-```ts
-interface DenomTrace {
-    channelId: string,
-    vaultAddress: string,
-    denom: string,
-}
-```
-- Deposit: 0x02 | channelId | vaultAddress | denom  -> ProtocolBuffer(DenomTrace)
-
 
 
 ```ts
@@ -46,8 +53,21 @@ class DepositEthereumResposne extends DefaultEthereumResponseAdapter<Deposit> {
 
 ### Messages
 ```proto
+message PoolToken {
+    string channelId = 1;
+    Coin token = 2;
+    string desiredSender = 3;
+    u32 weight = 4;
+}
+
+message MsgCreatePool {
+    u32 swapFee = 1;
+    repeated PoolToken tokens = 2;
+}
+```
+```proto
 message MsgMultiDeposit {
-    string desired_sender = 1;
+    string desiredSender = 1;
     string poolId = 2;
     repeated Coin tokens = 3;
     string channelId = 4;
@@ -80,12 +100,103 @@ message MsgSwap {
 ### MessageHandler
 
 ```ts
-function handleMsgDeposit(msg: MsgDeposit) {
+function handleMsgCreatePool(msg: MsgCreatePool) {
+
+    let poolId = store.getIncrementalPoolId() //
+    let poolAssets = []
+    let totalWeight = 0;
+    let remoteAsset = 0;
+    for(t in msg.tokens) {
+        if(t.channelId === 'native') {
+            let escrowedAddress = getEscrowedAccount(`${AppName}/${poolId}`)
+            bank.sendTokenToAccount(msg.sender, escrowedAddress, t.token)
+        } else {
+            // request remote deposit
+            const request: IntentRequest  = {
+                channelId: t.channelId,
+                action: "CreatePool",
+                expectedSender: t.desired_sender, // the expected sender of inboundTx on counterparty chain
+                hash: "",
+                status: "INITIATED",
+                inboundTx: [],
+                createAt: block.timestamp,
+            }
+
+            store.registerInboundSigningRequest(request)
+            remoteAsset++;
+        }
+
+        poolAssets.push({
+            channelId: t.channelId;  // native or channel_id
+            balance: t.token;
+            weight: t.weight;
+        })
+        totalWeight += t.weight;
+    }
+    abortTransactionUnless(totalWeight === 100);
+
+    let supplyAmount = 0
+    if(remoteAssets === 0 ) {
+        supplyAmount = calculateInitialSupply(msg.tokens);
+    }
+    let supplyToken = new Coin(supplyAmount, supplyToken);
+    if(supplyAmount > 0) {
+        // if tokens are native, pool will created in the handler.
+        // otherwise, pool will created when the remoted deposited is finalised.
+        bank.mint(ModuleName, supplyToken);
+        bank.sendTokenFromModuleToAccount(ModuleName, msg.sender, supplyToken);
+    }
+
+    let newPool = {
+        id: poolId;
+        assets: poolAssets;
+        swapFee: msg.swapFee;
+        supply: supplyToken;
+        status: supplyAmount==0? "Initial": "Ready";
+    }
+
+    store.save(newPool)
+
+}
+function handleMsgSingleDeposit(msg: MsgSingleDeposit) {
+
+    // process request
+    if(isNativeToken(msg.token)) {
+        // lock assets on escrowed account
+        bank.sendTokenToModule(msg.sender, Module_Name, msg.token)
+    } else {
+        // request remote deposit
+        const request: IntentRequest  = {
+            channelId: msg.channelId,
+            action: "SingleDeposit",
+            expectedSender: msg.desired_sender, // the expected sender of inboundTx on counterparty chain
+            hash: "",
+            status: "INITIATED",
+            inboundTx: [],
+            createAt: block.timestamp,
+        }
+
+        store.registerInboundSigningRequest(request)
+    }
+
+    cosnt deposit = {
+        sender: msg.sender,
+        desired_sender: msg.desired_sender, // remote sender
+        token: msg.token,
+        channelId: msg.channeId,
+        status: "INITIATED",
+        createdAt: block.timestamp,
+        completedAt: 0,
+    }
+    store.save(deposit)
+}
+
+function handleMsgMultiDeposit(msg: MsgMultiDeposit) {
 
     // process request
     const request: IntentRequest  = {
         channelId: msg.channelId,
-        action: "Deposit",
+        action: "MultiDeposit",
         expectedSender: msg.desired_sender, // the expected sender of inboundTx on counterparty chain
         hash: "",
         status: "INITIATED",
@@ -128,6 +239,25 @@ function handleMsgWithdraw(msg: MsgWithdraw) {
 }
 ```
 
+```ts
+function handleMsgSwap(msg: MsgWithdraw) {
+    const channel = store.getChannel(msg.channelId)
+    const adapter = TX_REGISTRY.getAdapter(msg.channelId)
+
+    // naming check
+    const tokenMeta = store.getTokenMeta(msg.token.denom)
+    if (msg.token.denom !== hash(`${channel.id}/${channel.vaultAddress}/${tokenMeta.denom}`)) {
+        throw new Error("Can not withdraw the tokens")
+    }
+    // convert voucher coin to remote tokens
+    // TODO: process ERC20 later
+    const value = parseInt(msg.token.amount)
+    const data = ""
+    store.registerOutboundSigningRequest(adapter.buildSigningRequest(
+        "WITHDRAW", channel, msg.recipient, value, data
+    ))
+}
+```
 ### Transaction Handler
 
 ```ts
