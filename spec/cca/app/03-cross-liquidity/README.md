@@ -49,6 +49,18 @@ interface Withdraw {
     createdAt: u64,
     completedAt: u64,
 }
+
+interface Trade {
+    sender: string, // local sender
+    poolId: string,
+    requestId: string,
+    tokenIn: Coin,
+    tokenOut: Coin,
+    slippage: u64,
+    status: string,
+    createdAt: u64,
+    completedAt: u64,
+}
 ```
 
 - Deposit: 0x01 | sender | desired_sender | channelId -> ProtocolBuffer(Deposit)
@@ -106,7 +118,7 @@ message MsgWithdraw {
 
 ```proto
 message MsgSwap {
-    string channelId = 1;
+    string sender = 1;
     string recipient = 2;
     string poolId = 3;
     Coin tokenIn = 4;
@@ -216,7 +228,7 @@ function handleMsgSingleDeposit(msg: MsgSingleDeposit) {
             createAt: block.timestamp,
         }
 
-        store.registerInboundSigningRequest(request)
+        store.registerInboundRequest(request)
     }
 }
 
@@ -233,7 +245,7 @@ function handleMsgMultiDeposit(msg: MsgMultiDeposit) {
         createAt: block.timestamp,
     }
 
-    store.registerInboundSigningRequest(request)
+    store.registerInboundRequest(request)
 
     cosnt deposit = {
         sender: msg.sender,
@@ -279,25 +291,66 @@ function handleMsgWithdraw(msg: MsgWithdraw) {
 ```
 
 ```ts
-function handleMsgSwap(msg: MsgWithdraw) {
-  const channel = store.getChannel(msg.channelId);
-  const adapter = TX_REGISTRY.getAdapter(msg.channelId);
+function handleMsgSwap(msg: MsgSwap) {
+    // process request
+    let trade = {
+        sender: msg.sender, // local sender
+        poolId: msg.poolId,
+        tokenIn: msg.TokenIn,
+        tokenOut: msg.TokenOut,
+        slippage: msg.slippage,
+        createdAt: block.timestamp,
+        completedAt: 0,
+    }
+    if(isNativeToken(msg.tokenIn)) {
+        // lock assets on escrowed account
+        let pool = getPool(msg.poolId)
+        let escrowedAddress = getEscrowedAccount(`${AppName}/${msg.poolId}`)
+        bank.sendTokenToAccount(msg.sender, escrowedAddress, t.tokenIn)
+        let outAmount = calculateSwapOut(msg.tokenIn);
+        if(outAmount > 0) {
+            let outToken = new Coin(outAmount, msg.tokenOut.denom)
+            if(isNativeToken(msg.tokenOut)) {
+                bank.sendTokenToAccount(escrowedAddress, msg.sender, outToken)
+                // update pool states
+                for (t in pool.assets) {
+                    if (t.denom == msg.tokenIn.denom) {
+                        t.amount += msg.tokenIn.amount
+                    }
+                    if (t.denom == outToken.denom) {
+                        t.amount -= outToken.amount
+                    }
+                }
+                store.save(pool)
+                trade.status = 'Completed'
+            } else {
+                let requestId = store.registerOutboundSigningRequest(
+                    adapter.buildSigningRequest("Swap", channel, msg.recipient, outToken)
+                );
+                trade.status = 'Initial'
+            }
+        }
+    } else {
+        // request remote deposit
+        const request: IntentRequest  = {
+            sender: msg.sender,
+            channelId: msg.channelId,
+            action: "Swap",
+            referenceId: trade.id
+            expectedSender: msg.desired_sender, // the expected sender of inboundTx on
+            expectedReceivedToken: msg.token,
+            hash: "",
+            status: "INITIATED",
+            inboundTx: [],
+            createAt: block.timestamp,
+        }
 
-  // naming check
-  const tokenMeta = store.getTokenMeta(msg.token.denom);
-  if (
-    msg.token.denom !==
-    hash(`${channel.id}/${channel.vaultAddress}/${tokenMeta.denom}`)
-  ) {
-    throw new Error("Can not withdraw the tokens");
-  }
-  // convert voucher coin to remote tokens
-  // TODO: process ERC20 later
-  const value = parseInt(msg.token.amount);
-  const data = "";
-  store.registerOutboundSigningRequest(
-    adapter.buildSigningRequest("WITHDRAW", channel, msg.recipient, value, data)
-  );
+        let requestId = store.registerInboundRequest(request)
+        trade.status = 'Initial'
+        trade.requestId = requestId
+    }
+
+    store.save(trade)
 }
 ```
 
@@ -365,6 +418,31 @@ function onInboundFinalized(request: IntentRequest) {
     }
     pool.supply.amount += newSupplyAmount;
     store.save(pool);
+  } else if (request.action === 'Swap') {
+    let trade = store.getWithdraw(request.referenceId);
+    let pool = store.getPool(withdraw.poolId)
+    let outAmount = calculateOutToken( pool, trade.tokenIn );
+    let outToken = new Coin(outAmount, msg.tokenOut.denom)
+    if(isNativeToken(msg.tokenOut)) {
+        bank.sendTokenToAccount(escrowedAddress, msg.sender, outToken)
+        // update pool states
+        for (t in pool.assets) {
+            if (t.denom == msg.tokenIn.denom) {
+                t.amount += msg.tokenIn.amount
+            }
+            if (t.denom == outToken.denom) {
+                t.amount -= outToken.amount
+            }
+        }
+        store.save(pool)
+        trade.status = 'Completed'
+    } else {
+        let requestId = store.registerOutboundSigningRequest(
+            adapter.buildSigningRequest("Swap", channel, msg.recipient, outToken)
+        );
+        trade.status = 'Executed'
+    }
+    store.save(trade)
   }
 }
 ```
@@ -389,9 +467,25 @@ function onOutboundSigned(request: SigningRequest) {
     }
     pool.supply.amount -= withdraw.token.amount;
     store.save(pool);
-
     withdraw.status = 'Executed'
     store.save(withdraw)
+  } else if(request.action === "Swap") {
+    let trade = store.getTrade(request.referenceId)
+    let pool = store.getPool(trade.poolId)
+    let outAmount = calculateOutToken( pool, trade.tokenIn );
+    let outToken = new Coin(outAmount, msg.tokenOut.denom)
+    // update pool states
+    for (t in pool.assets) {
+        if (t.denom == trade.tokenIn.denom) {
+            t.amount += trade.tokenIn.amount
+        }
+        if (t.denom == outToken.denom) {
+            t.amount -= outToken.amount
+        }
+    }
+    store.save(pool)
+    trade.status = 'Executed'
+    store.save(trade)
   }
 }
 ```
@@ -410,10 +504,15 @@ function onOutboundConfirmed(request: SigningRequest) {}
 
 ```ts
 function onOutboundFinalized(request: SigningRequest) {
-  if (request.action === "Withdraw") {
-    let withdraw = store.getWithdraw(request.referenceId);
-    withraw.status = 'Finalised'
-    store.save(withdraw)
-  }
+    if (request.action === "Withdraw") {
+        let withdraw = store.getWithdraw(request.referenceId);
+        withraw.status = 'Finalised'
+        store.save(withdraw)
+    } else if(request.action == 'Swap') {
+        // update pool states
+        let trade = store.getTrade(request.referenceId)
+        trade.status = 'Completed'
+        store.save(trade)
+    }
 }
 ```
