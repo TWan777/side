@@ -18,6 +18,7 @@ interface PoolAsset {
 
 ```ts
 interface WeightedPool {
+  creator: string,
   id: string;
   assets: []PoolAsset;
   swapFee: int32;
@@ -110,13 +111,21 @@ function handleMsgCreatePool(msg: MsgCreatePool) {
         if(t.channelId === 'native') {
             let escrowedAddress = getEscrowedAccount(`${AppName}/${poolId}`)
             bank.sendTokenToAccount(msg.sender, escrowedAddress, t.token)
+
+            poolAssets.push({
+                channelId: t.channelId;  // native or channel_id
+                balance: t.token;
+                weight: t.weight;
+            })
         } else {
             // request remote deposit
             const request: IntentRequest  = {
                 channelId: t.channelId,
                 action: "CreatePool",
-                expectedSender: t.desired_sender, // the expected sender of inboundTx on counterparty chain
+                expectedSender: t.desired_sender, // the expected sender of inboundTx on
+                expectedReceivedToken: t.token,
                 hash: "",
+                referenceId: poolId,
                 status: "INITIATED",
                 inboundTx: [],
                 createAt: block.timestamp,
@@ -124,13 +133,14 @@ function handleMsgCreatePool(msg: MsgCreatePool) {
 
             store.registerInboundSigningRequest(request)
             remoteAsset++;
+
+            poolAssets.push({
+                channelId: t.channelId;  // native or channel_id
+                balance: new Coin(0, t.token.denom);
+                weight: t.weight;
+            })
         }
 
-        poolAssets.push({
-            channelId: t.channelId;  // native or channel_id
-            balance: t.token;
-            weight: t.weight;
-        })
         totalWeight += t.weight;
     }
     abortTransactionUnless(totalWeight === 100);
@@ -272,26 +282,37 @@ function onInboundConfirmed(request: IntentRequest) {
 ```ts
 function onInboundFinalized(request: IntentRequest) {
 
-    const key = `0x01|${request.sender}|${request.desired_sender}|${request.channelId}`
-    const deposit = store.getDeposit(key)
     const channel = store.getChannel(request.channelId)
-
     const adapter = new DepositEthereumResposne(request, channel,  deposit)
     const ok = adapter.verify()
     if(!ok) return
 
     // Mint voucher tokens
-    const denom = hash(`${channel.id}/${channel.vaultAddress}/${deposit.token.denom}`);
-    const voucherToken = new Coin(deposit.token.amount, denom);
-    bank.mintToken(voucherToken)
-    bank.sendToken(moduleAddress, deposit.sender, voucherToken)
+    if(request.action === 'CreatePool') {
 
-    // save denom trace
-    store.save(denom, {
-       channelId: channel.id,
-       vaultAddress: channel.vaultAddress,
-       denom: deposit.token.denom,
-    })
+        let pool = store.findPoolbyId(request.referenceId);
+        for(t in pool.tokens) {
+            if(t.balance.denom === request.expectedReceivedToken.denom) {
+                t.amount = request.expectedReceivedToken.amount
+            }
+        }
+        // check if deposit completed
+        let doneDeposited = true;
+        for(t in pool.assets) {
+            if(t.amount == 0) {
+                doneDeposited = false
+            }
+        }
+        if(doneDeposited) {
+            supplyAmount = calculateInitialSupply(pool.assets);
+            let supplyToken = new Coin(supplyAmount, supplyToken);
+            // send pool token to the sender
+            bank.mint(ModuleName, supplyToken);
+            bank.sendTokenFromModuleToAccount(ModuleName, pool.creator, supplyToken);
+        }
+
+        store.save(pool)
+    }
 
 }
 ```

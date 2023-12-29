@@ -36,6 +36,7 @@ interface IntentRequest {
    channelId: string
    action: string,
    expectedSender: string, // the expected sender of inboundTx on counterparty chain
+   expectedReceivedToken: Coin,
    hash: string,
    referenceId: string,
    status: Enum,
