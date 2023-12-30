@@ -12,11 +12,16 @@ In this app, the vault is a contract controlled by the TSS network.
 ### Data Structure
 ```ts
 interface LSDStaking {
-
+    desiredSender:string;
+    token: Coin;
+    channelId: stirng;
+    status: string;
 }
 
 interface LSDWithdraw {
-
+    recipient: string;
+    token: Coin;
+    channelId: string;
 }
 ```
 
@@ -25,8 +30,7 @@ interface LSDWithdraw {
 ```proto
 message MsgLSDDeposit {
     string desiredSender = 1;
-    string poolId = 2;
-    repeated Coin tokens = 3;
+    Coin token = 2;
     string channelId = 4;
 }
 ```
@@ -34,9 +38,8 @@ message MsgLSDDeposit {
 ```proto
 message MsgLSDWithdraw {
     string recipient = 1;
-    string poolId = 2;
-    Coin token = 3;
-    string channelId = 4;
+    Coin token = 2;
+    string channelId = 3;
 }
 ```
 
