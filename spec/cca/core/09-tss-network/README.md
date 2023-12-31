@@ -6,9 +6,11 @@ All validators are required to operate a TSS Node to be eligible for rewards. Si
 
 The TSS Network acts as the owner of vaults on external blockchains. Its responsibility includes signing outbound transactions to approve the execution of transactions on external blockchains in accordance with `SigningRequest`s on the SIDE blockchain.
 
+## Technical Specification
+
+### Functions
 
  - Setup
-   
 ```go
 // Set up the parameters
 // Note: The `id` and `moniker` fields are for convenience to allow you to easily track participants.
@@ -20,6 +22,18 @@ thisParty := tss.NewPartyID(id, moniker, validator_pubkey)
  - Coordination
 
 The TSS network randomly selects a node as the leader in each epoch. This leader is responsible for handling tasks such as fetching signing requests and writing signatures back to the blockchain.
+
+```ts
+// fetch signing request and save to queue.
+function fetchSigningRequest() {
+
+}
+
+//submit the signatures to blockchain.
+function submitSignature() {
+
+}
+```
 
  - Keygen
 
