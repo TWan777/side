@@ -41,6 +41,12 @@ This specification outlines a solution enabling users to manage crosschain asset
 |3| [03-cross-liquidity](./app/03-cross-liquidity) | Draft |
 |4| [04-liquid-staking](./app/04-liquid-staking) | Draft |
 
+### Light Client
+| # | Module | Status |
+|--|--|--|
+|1| [01-ethereum-light-client](#) | TODO |
+|2| [02-bitcoin-light-client](#) | TODO |
+
 ## References 
  - [THORChain-Whitepaper-May2020](https://github.com/thorchain/Resources/blob/master/Whitepapers/THORChain-Whitepaper-May2020.pdf)
  - [Binance Open-Sources Threshold Signature Scheme Library
