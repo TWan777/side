@@ -24,28 +24,28 @@ This specification outlines a solution enabling users to manage crosschain asset
 | # | Module | Status |
 |--|--|--|
 |1| [CCA Core](./core) | Draft |
-|2| [client-semantics](./core/02-client-semantics) | Draft |
-|3| [channel-semantics](./core/03-channel-semantics) | Draft |
-|4| [request-semantics](./core/04-request-semantics) | Draft |
-|5| [transaction-adapter](./core/05-transaction-adapter) | Draft |
-|6| [routing](./core/06-routing) | Draft |
-|7| [handler](./core/07-handler) | Draft |
-|8| [relayer-semantics](./core/08-relayer-semantics) | Draft |
+|2| [Client Semantics](./core/02-client-semantics) | Draft |
+|3| [Channel Semantics](./core/03-channel-semantics) | Draft |
+|4| [Request Semantics](./core/04-request-semantics) | Draft |
+|5| [Transaction Adapter](./core/05-transaction-adapter) | Draft |
+|6| [Routing](./core/06-routing) | Draft |
+|7| [Handler Interface](./core/07-handler) | Draft |
+|8| [Relayer Semantics](./core/08-relayer-semantics) | Draft |
 |9| [TSS Network](./core/09-tss-network) | Draft |
 
 ### Apps
 | # | Module | Status |
 |--|--|--|
-|1| [01-cross-chain-bridge](./app/01-cross-chain-bridge) | Draft |
-|2| [02-atomic-swap](./app/02-atomic-swap) | Draft |
-|3| [03-cross-liquidity](./app/03-cross-liquidity) | Draft |
-|4| [04-liquid-staking](./app/04-liquid-staking) | Draft |
+|1| [Cross Chain Bridge](./app/01-cross-chain-bridge) | Draft |
+|2| [Atomic Swap](./app/02-atomic-swap) | Draft |
+|3| [Cross Liquidity](./app/03-cross-liquidity) | Draft |
+|4| [Delegated Liquid Staking](./app/04-liquid-staking) | Draft |
 
 ### Light Client
 | # | Module | Status |
 |--|--|--|
-|1| [01-ethereum-light-client](#) | TODO |
-|2| [02-bitcoin-light-client](#) | TODO |
+|1| [Ethereum Light Client](#) | TODO |
+|2| [Bitcoin Light Client](#) | TODO |
 
 ## References 
  - [THORChain-Whitepaper-May2020](https://github.com/thorchain/Resources/blob/master/Whitepapers/THORChain-Whitepaper-May2020.pdf)
