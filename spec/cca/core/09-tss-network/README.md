@@ -33,6 +33,17 @@ function fetchSigningRequest() {
 function submitSignature() {
 
 }
+
+// Request a new TSS account.
+// Note. TSS
+function fetchNewAccountRequest() {
+
+}
+
+// submit a new account pubkey and address to controller blockchain.
+function submitNewAccount() {
+
+}
 ```
 
  - Keygen
@@ -75,3 +86,7 @@ go func() {
 ```
 
 ⚠️ During re-sharing the key data may be modified during the rounds. Do not ever overwrite any data saved on disk until the final struct has been received through the end channel.
+
+## Implementation
+
+ - [BNB TSS Implementation](https://github.com/bnb-chain/tss-lib/blob/master/tss/party.go#L147)
