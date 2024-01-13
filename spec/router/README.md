@@ -53,6 +53,7 @@ interface IbcTimeout {
 ```ts
 interface CargoPacket {
     srcEndpoint: IbcEndpoint;
+    dstEndpoint: IbcEndpoint;
     packetTimeout: IbcTimeout;
     retriesRemaining: number;
     packetData: []byte[];
@@ -137,6 +138,26 @@ class SideHubRouter {
         }
     }
 
+
+    function WriteAcknowledgementForForwardedPacket(
+	    packet:Packet,
+	    data:ForwardablePacketData,
+	    cargoPacket: CargoPacket,
+	    ack:Acknowledgement,
+    )    {
+	// Lookup module by channel capability
+	const  cap = this.channelKeeper.LookupModuleByChannel(cargoPacket.srcIbcEndpoint.portId, cargoPacket.srcIbcEndpoint.channelId);
+	return k.ics4Wrapper.WriteAcknowledgement(ctx, cap, channeltypes.Packet{
+		    Data:               cargoPacket.packetData,
+		    Sequence:           0,
+		    SourcePort:         cargoPacket.srcIbcEndpoint.portId,
+		    SourceChannel:      cargoPacket.srcIbcEndpoint.channelId,
+		    DestinationPort:    cargoPacket.dstIbcEndpoint.portId,
+		    DestinationChannel: cargoPacket.dstIbcEndpoint.channelId,
+		    TimeoutHeight:      clienttypes.MustParseHeight(cargoPacket.packetTimeout.height),
+		    TimeoutTimestamp:   cargoPacket.packetTimeout.timestamp,
+	    }, ack)
+    }
 }
 ```
 
@@ -207,9 +228,9 @@ class IBCMiddleware {
 
     // OnRecvPacket checks the memo field on this packet and if the metadata inside's root key indicates this packet
     function OnRecvPacket(
-    	packet channeltypes.Packet,
-    	relayer sdk.AccAddress,
-    ) Acknowledgement {
+    	packet:Packet,
+    	relayer:string,
+    ):Acknowledgement {
     	let data: ForwardablePacket = protobuf.UnmarshalJSON(packet.GetData())
         abortTransactionUnless(json.parse(data.Memo))
     	const m:PacketMetadata = json.parse(data.Memo);
@@ -227,9 +248,9 @@ class IBCMiddleware {
 
     // OnAcknowledgementPacket implements the IBCModule interface.
     function OnAcknowledgementPacket(
-    	packet Packet, // channel types
-    	acknowledgement []byte,
-    	relayer string,
+    	packet: Packet, // channel types
+    	acknowledgement: []byte,
+    	relayer: string,
     ) {
         const data:ForwardablePacket = abortTransactionUnless(protobuf.UnmarshalJSON(packet.GetData()))
 
@@ -237,35 +258,29 @@ class IBCMiddleware {
     	return this.app.OnAcknowledgementPacket(packet, acknowledgement, relayer)
     }
 
-
     // OnTimeoutPacket implements the IBCModule interface.
-    function OnTimeoutPacket(packet channeltypes.Packet, relayer sdk.AccAddress) {
+    function OnTimeoutPacket(packet:Packet, relayer:string) {
         try {
             const data:ForwardablePacket = protobuf.UnmarshalJSON(packet.GetData())
-
         }catch (e) {
             return this.app.OnTimeoutPacket(packet, relayer)
         }
 
-	    inFlightPacket, err := im.keeper.TimeoutShouldRetry(ctx, packet)
-	    if inFlightPacket != nil {
-	    	if err != nil {
-	    		im.keeper.RemoveInFlightPacket(ctx, packet)
+	    const {cargoPacket, err} = this.router.TimeoutShouldRetry(ctx, packet)
+	    if cargoPacket != undefined {
+	    	if err != undefined  {
+	    		this.router.RemoveCargoPacket(packet)
 	    		// this is a forwarded packet, so override handling to avoid refund from being processed on this chain.
 	    		// WriteAcknowledgement with proxied ack to return success/fail to previous chain.
-	    		return im.keeper.WriteAcknowledgementForForwardedPacket(ctx, packet, data, inFlightPacket, newErrorAcknowledgement(err))
+	    		return this.router.WriteAcknowledgementForForwardedPacket(packet, data, cargoPacket, newErrorAcknowledgement(err))
 	    	}
 	    	// timeout should be retried. In order to do that, we need to handle this timeout to refund on this chain first.
-	    	if err := im.app.OnTimeoutPacket(ctx, packet, relayer); err != nil {
-	    		return err
-	    	}
-	    	return im.keeper.RetryTimeout(ctx, packet.SourceChannel, packet.SourcePort, data, inFlightPacket)
+	    	abortTransactionUnless(this.app.OnTimeoutPacket(ctx, packet, relayer))
+	    	return this.router.RetryTimeout(packet.SourceChannel, packet.SourcePort, data, cargoPacket)
 	    }
-
-	    return im.app.OnTimeoutPacket(ctx, packet, relayer)
+	    return this.app.OnTimeoutPacket(packet, relayer)
     }
 }
-
 ```
 
 ## Example Implementation
