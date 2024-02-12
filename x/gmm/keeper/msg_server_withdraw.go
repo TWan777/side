@@ -26,7 +26,7 @@ func (k msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*typ
 
 	// Check creator has enough share or not
 	bal := k.bankKeeper.GetBalance(ctx, sdk.MustAccAddressFromBech32(msg.Sender),
-		msg.Share.Denom,
+		msg.PoolId,
 	)
 	if bal.IsLT(msg.Share) {
 		return nil, types.ErrInsufficientBalance
