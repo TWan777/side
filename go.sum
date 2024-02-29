@@ -900,6 +900,10 @@ github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229155132-d26830f0811a h1:HJKITWR3agEqBJli9ZGoUWi6bsAR8ExtHVTKWYJYDgk=
 github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229155132-d26830f0811a/go.mod h1:/euetAAJE1/s/m6TxGFBLBv1UamUDcIH3Xgn3CJnnKI=
+github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229160653-9d0fca36b044 h1:ZqygJSw8Zxv7aEhvfuzt+Vjl5ewndVri/tk4tQPDcEE=
+github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229160653-9d0fca36b044/go.mod h1:/euetAAJE1/s/m6TxGFBLBv1UamUDcIH3Xgn3CJnnKI=
+github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229163303-ec9803578678 h1:2XQlJJCuVlUYy96o0yqzVuDYUZMOAh/klnuXy8u6HxY=
+github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229163303-ec9803578678/go.mod h1:/euetAAJE1/s/m6TxGFBLBv1UamUDcIH3Xgn3CJnnKI=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0/go.mod h1:7uNnSEd1DgxDLC74fIahvMZmmYsHGZGEOFrfsX/uA88=
