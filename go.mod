@@ -191,7 +191,7 @@ require (
 	github.com/cosmos/cosmos-proto v1.0.0-beta.4
 	github.com/cosmos/ics23/go v0.10.0
 	github.com/prometheus/client_golang v1.15.0
-	github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229194459-3e30ce92e858
+	github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229194943-319bea70f458
 	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.32.0
