@@ -914,6 +914,8 @@ github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229211239-4ac46
 github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229211239-4ac46dcd6393/go.mod h1:/euetAAJE1/s/m6TxGFBLBv1UamUDcIH3Xgn3CJnnKI=
 github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229211738-bf3ce79c89ce h1:hys1GjmY8GqKiLEIuCmFpipNe1GS8/Tj1NFhJ59ljQw=
 github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229211738-bf3ce79c89ce/go.mod h1:/euetAAJE1/s/m6TxGFBLBv1UamUDcIH3Xgn3CJnnKI=
+github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229212342-12861e80343b h1:HC3w/XnjHBZjXfQINPQNmciM2LcSy4Nv5hUucoAmG1o=
+github.com/sideprotocol/packet-forward-middleware/v7 v7.0.0-20240229212342-12861e80343b/go.mod h1:/euetAAJE1/s/m6TxGFBLBv1UamUDcIH3Xgn3CJnnKI=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.6.0/go.mod h1:7uNnSEd1DgxDLC74fIahvMZmmYsHGZGEOFrfsX/uA88=
