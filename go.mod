@@ -40,7 +40,9 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.1-0.20220910012023-760eaf8b6816 // indirect
+	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
+	github.com/btcsuite/btcutil v1.0.2 // indirect
 	github.com/bufbuild/protocompile v0.6.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
@@ -179,12 +181,12 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
 	pgregory.net/rapid v1.1.0 // indirect
-	sigs.k8s.io/yaml v1.3.0 // indirect
+	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
 require (
 	cosmossdk.io/errors v1.0.1
-	cosmossdk.io/math v1.2.0
+	cosmossdk.io/math v1.3.0
 	github.com/CosmWasm/wasmd v0.40.1
 	github.com/CosmWasm/wasmvm v1.2.4
 	github.com/Stride-Labs/stride/v16 v16.0.0
@@ -199,6 +201,7 @@ require (
 )
 
 replace (
+	github.com/cosmos/cosmos-sdk => ../cosmos-sdk
 	github.com/cosmos/interchain-security/v3 => github.com/Stride-Labs/interchain-security/v3 v3.1.0-remove-validation-bug-7d3d9d
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
