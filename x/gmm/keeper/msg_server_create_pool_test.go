@@ -3,7 +3,6 @@ package keeper_test
 import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	simapp "github.com/sideprotocol/side/app"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/sideprotocol/side/x/gmm/types"
 )
@@ -66,12 +65,12 @@ func (suite *KeeperTestSuite) defaultMsgCreatePool() *types.MsgCreatePool {
 		},
 		[]types.PoolAsset{
 			{
-				Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(sample.DefaultBondDenom, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdkmath.NewInt(6),
 			},
 			{
-				Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(sample.USDC, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdkmath.NewInt(6),
 			},
@@ -84,12 +83,12 @@ func (suite *KeeperTestSuite) createStablePoolLiquidity() []types.PoolAsset {
 	weight := sdkmath.NewInt(50)
 	return []types.PoolAsset{
 		{
-			Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
+			Token:   sdk.NewCoin(sample.WDAI, sdkmath.NewInt(100)),
 			Weight:  &weight,
 			Decimal: sdkmath.NewInt(6),
 		},
 		{
-			Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
+			Token:   sdk.NewCoin(sample.WUSDT, sdkmath.NewInt(100)),
 			Weight:  &weight,
 			Decimal: sdkmath.NewInt(6),
 		},
@@ -122,12 +121,12 @@ func (suite *KeeperTestSuite) TestMsgCreatePoolFail() {
 					},
 					[]types.PoolAsset{
 						{
-							Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
+							Token:   sdk.NewCoin(sample.DefaultBondDenom, sdkmath.NewInt(100)),
 							Weight:  &weight,
 							Decimal: sdkmath.NewInt(6),
 						},
 						{
-							Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
+							Token:   sdk.NewCoin(sample.USDC, sdkmath.NewInt(100)),
 							Weight:  &weight,
 							Decimal: sdkmath.NewInt(6),
 						},
@@ -192,12 +191,12 @@ func (suite *KeeperTestSuite) createNewWeightPool() string {
 		},
 		[]types.PoolAsset{
 			{
-				Token:   sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(sample.DefaultBondDenom, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdkmath.NewInt(6),
 			},
 			{
-				Token:   sdk.NewCoin(simapp.USDC, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(sample.USDC, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdkmath.NewInt(6),
 			},
@@ -228,12 +227,12 @@ func (suite *KeeperTestSuite) createNewStablePool() string {
 		},
 		[]types.PoolAsset{
 			{
-				Token:   sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(sample.WDAI, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdkmath.NewInt(6),
 			},
 			{
-				Token:   sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
+				Token:   sdk.NewCoin(sample.WUSDT, sdkmath.NewInt(100)),
 				Weight:  &weight,
 				Decimal: sdkmath.NewInt(6),
 			},

@@ -3,7 +3,7 @@ package keeper_test
 import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	simapp "github.com/sideprotocol/side/app"
+	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/sideprotocol/side/x/gmm/types"
 )
 
@@ -19,16 +19,16 @@ func (suite *KeeperTestSuite) TestMsgSwap() {
 			"swap in weight pool",
 			types.PoolType_WEIGHT,
 			func(msg *types.MsgSwap, poolID string) {
-				msg.TokenIn = sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100))
-				msg.TokenOut = sdk.NewCoin(simapp.USDC, sdkmath.NewInt(0))
+				msg.TokenIn = sdk.NewCoin(sample.DefaultBondDenom, sdkmath.NewInt(100))
+				msg.TokenOut = sdk.NewCoin(sample.USDC, sdkmath.NewInt(0))
 			},
 		},
 		{
 			"swap in stable pool",
 			types.PoolType_STABLE,
 			func(msg *types.MsgSwap, poolID string) {
-				msg.TokenIn = sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100))
-				msg.TokenOut = sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(0))
+				msg.TokenIn = sdk.NewCoin(sample.WDAI, sdkmath.NewInt(100))
+				msg.TokenOut = sdk.NewCoin(sample.WUSDT, sdkmath.NewInt(0))
 			},
 		},
 	}
@@ -115,8 +115,8 @@ func (suite *KeeperTestSuite) TestMsgSwapFail() {
 				Sender:   types.Alice,
 				PoolId:   poolID,
 				Slippage: sdkmath.NewInt(1),
-				TokenIn:  sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
-				TokenOut: sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(50)),
+				TokenIn:  sdk.NewCoin(sample.WDAI, sdkmath.NewInt(100)),
+				TokenOut: sdk.NewCoin(sample.WUSDT, sdkmath.NewInt(50)),
 			}
 
 			// Use the mutator to set the failure conditions

@@ -3,7 +3,6 @@ package keeper_test
 import (
 	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	simapp "github.com/sideprotocol/side/app"
 	"github.com/sideprotocol/side/testutil/sample"
 	"github.com/sideprotocol/side/x/gmm/types"
 )
@@ -21,7 +20,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidity() {
 			types.PoolType_WEIGHT,
 			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg.Liquidity = []sdk.Coin{
-					sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(100)),
+					sdk.NewCoin(sample.DefaultBondDenom, sdkmath.NewInt(100)),
 				}
 			},
 		},
@@ -30,8 +29,8 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidity() {
 			types.PoolType_STABLE,
 			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg.Liquidity = []sdk.Coin{
-					sdk.NewCoin(simapp.WDAI, sdkmath.NewInt(100)),
-					sdk.NewCoin(simapp.WUSDT, sdkmath.NewInt(100)),
+					sdk.NewCoin(sample.WDAI, sdkmath.NewInt(100)),
+					sdk.NewCoin(sample.WUSDT, sdkmath.NewInt(100)),
 				}
 			},
 		},
@@ -81,7 +80,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 					PoolId: "",
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(
-							simapp.DefaultBondDenom,
+							sample.DefaultBondDenom,
 							sdkmath.NewInt(100),
 						),
 					},
@@ -96,7 +95,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 					PoolId: poolID,
 					Liquidity: []sdk.Coin{
 						sdk.NewCoin(
-							simapp.DefaultBondDenom,
+							sample.DefaultBondDenom,
 							sdkmath.NewInt(100),
 						),
 					},
@@ -115,7 +114,7 @@ func (suite *KeeperTestSuite) TestMsgAddLiquidityFail() {
 			"zero liquidity",
 			func(msg *types.MsgAddLiquidity, poolID string) {
 				msg.Liquidity = []sdk.Coin{
-					sdk.NewCoin(simapp.DefaultBondDenom, sdkmath.NewInt(0)),
+					sdk.NewCoin(sample.DefaultBondDenom, sdkmath.NewInt(0)),
 				}
 			},
 		},

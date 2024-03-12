@@ -3,14 +3,16 @@ package keeper_test
 import (
 	"testing"
 
+	db "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simapp "github.com/sideprotocol/side/app"
-	"github.com/sideprotocol/side/x/gmm/keeper"
+	sample "github.com/sideprotocol/side/testutil/sample"
 	"github.com/sideprotocol/side/x/gmm/types"
 	"github.com/stretchr/testify/suite"
 
+	"cosmossdk.io/log"
 	sdkmath "cosmossdk.io/math"
 
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -41,7 +43,16 @@ var gmmModuleAddress string
 
 func (suite *KeeperTestSuite) SetupTest() {
 	// app := simapp.InitSideTestApp(initChain)
-	app := simapp.Setup(suite.T())
+	logger := log.NewTestLogger(suite.T())
+	db := db.NewMemDB()
+
+	app, _ := simapp.New(
+		logger,
+		db,
+		nil,
+		true,
+		nil,
+	)
 	ctx := app.BaseApp.NewContext(false)
 	app.BankKeeper.SetParams(ctx, banktypes.DefaultParams())
 	stakingParams := stakingtypes.DefaultParams()
@@ -50,15 +61,15 @@ func (suite *KeeperTestSuite) SetupTest() {
 
 	gmmModuleAddress = app.AccountKeeper.GetModuleAddress(types.ModuleName).String()
 
-	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.InterfaceRegistry())
-	types.RegisterQueryServer(queryHelper, app.GmmKeeper)
+	queryHelper := baseapp.NewQueryServerTestHelper(ctx, app.AppCodec().InterfaceRegistry())
+	//types.RegisterQueryServer(queryHelper, app.GmmKeeper)
 	queryClient := types.NewQueryClient(queryHelper)
 
 	suite.legacyAmino = app.LegacyAmino()
 	suite.ctx = ctx
 	suite.app = app
 	suite.queryClient = queryClient
-	suite.msgServer = keeper.NewMsgServerImpl(app.GmmKeeper)
+	//suite.msgServer = keeper.NewMsgServerImpl(app.GmmKeeper)
 
 	// Set Coins
 	suite.setupSuiteWithBalances()
@@ -82,23 +93,23 @@ func makeBalance(address string, balance int64, denom string) banktypes.Balance 
 
 func getBankGenesis() *banktypes.GenesisState {
 	coins := []banktypes.Balance{
-		makeBalance(types.Alice, balAlice, simapp.DefaultBondDenom),
-		makeBalance(types.Alice, balAlice, simapp.USDC),
-		makeBalance(types.Alice, balAlice, simapp.WBTC),
-		makeBalance(types.Alice, balAlice, simapp.WDAI),
-		makeBalance(types.Alice, balAlice, simapp.WUSDT),
+		makeBalance(types.Alice, balAlice, sample.DefaultBondDenom),
+		makeBalance(types.Alice, balAlice, sample.USDC),
+		makeBalance(types.Alice, balAlice, sample.WBTC),
+		makeBalance(types.Alice, balAlice, sample.WDAI),
+		makeBalance(types.Alice, balAlice, sample.WUSDT),
 
-		makeBalance(types.Bob, balBob, simapp.DefaultBondDenom),
-		makeBalance(types.Bob, balBob, simapp.USDC),
-		makeBalance(types.Bob, balAlice, simapp.WBTC),
-		makeBalance(types.Bob, balAlice, simapp.WDAI),
-		makeBalance(types.Bob, balAlice, simapp.WUSDT),
+		makeBalance(types.Bob, balBob, sample.DefaultBondDenom),
+		makeBalance(types.Bob, balBob, sample.USDC),
+		makeBalance(types.Bob, balAlice, sample.WBTC),
+		makeBalance(types.Bob, balAlice, sample.WDAI),
+		makeBalance(types.Bob, balAlice, sample.WUSDT),
 
-		makeBalance(types.Carol, balCarol, simapp.DefaultBondDenom),
-		makeBalance(types.Carol, balCarol, simapp.USDC),
-		makeBalance(types.Carol, balAlice, simapp.WBTC),
-		makeBalance(types.Carol, balAlice, simapp.WDAI),
-		makeBalance(types.Carol, balAlice, simapp.WUSDT),
+		makeBalance(types.Carol, balCarol, sample.DefaultBondDenom),
+		makeBalance(types.Carol, balCarol, sample.USDC),
+		makeBalance(types.Carol, balAlice, sample.WBTC),
+		makeBalance(types.Carol, balAlice, sample.WDAI),
+		makeBalance(types.Carol, balAlice, sample.WUSDT),
 	}
 
 	params := banktypes.DefaultParams()
@@ -108,8 +119,8 @@ func getBankGenesis() *banktypes.GenesisState {
 		coins,
 		addAll(coins),
 		[]banktypes.Metadata{}, []banktypes.SendEnabled{
-			{Denom: simapp.DefaultBondDenom, Enabled: true},
-			{Denom: simapp.USDC, Enabled: true},
+			{Denom: sample.DefaultBondDenom, Enabled: true},
+			{Denom: sample.USDC, Enabled: true},
 		})
 
 	return state
