@@ -30,7 +30,7 @@ func (msg *MsgAddLiquidity) Type() string {
 	return TypeMsgAddLiquidity
 }
 
-func (msg *MsgAddLiquidity) GetSigners() []sdk.AccAddress {
+func (msg *MsgAddLiquidity) DefineCustomGetSigners() []sdk.AccAddress {
 	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)

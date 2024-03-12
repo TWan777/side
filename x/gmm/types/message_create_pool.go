@@ -30,7 +30,7 @@ func (msg *MsgCreatePool) Type() string {
 	return TypeMsgCreatePool
 }
 
-func (msg *MsgCreatePool) GetSigners() []sdk.AccAddress {
+func (msg *MsgCreatePool) DefineCustomGetSigners() []sdk.AccAddress {
 	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)

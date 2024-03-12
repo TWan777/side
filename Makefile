@@ -395,12 +395,9 @@ endif
 .PHONY: check-proto-deps
 
 
-proto-gen: check-proto-deps
+proto-gen:
 	@echo "Generating Protobuf files"
-	@go run github.com/bufbuild/buf/cmd/buf generate
-	@mv ./proto/tendermint/abci/types.pb.go ./abci/types/
-	@cp ./proto/tendermint/rpc/grpc/types.pb.go ./rpc/grpc
-.PHONY: proto-gen
+	@$(protoImage) sh ./scripts/protocgen.sh
 
 # These targets are provided for convenience and are intended for local
 # execution only.

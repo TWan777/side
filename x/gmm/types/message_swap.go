@@ -33,7 +33,7 @@ func (msg *MsgSwap) Type() string {
 	return TypeMsgSwap
 }
 
-func (msg *MsgSwap) GetSigners() []sdk.AccAddress {
+func (msg *MsgSwap) DefineCustomGetSigners() []sdk.AccAddress {
 	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)

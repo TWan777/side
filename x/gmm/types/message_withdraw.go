@@ -31,7 +31,7 @@ func (msg *MsgWithdraw) Type() string {
 	return TypeMsgWithdraw
 }
 
-func (msg *MsgWithdraw) GetSigners() []sdk.AccAddress {
+func (msg *MsgWithdraw) DefineCustomGetSigners() []sdk.AccAddress {
 	Sender, err := sdk.AccAddressFromBech32(msg.Sender)
 	if err != nil {
 		panic(err)
