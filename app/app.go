@@ -60,6 +60,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
+	btcbridgetypes "github.com/sideprotocol/side/x/btcbridge/types"
 	gmmmoduletypes "github.com/sideprotocol/side/x/gmm/types"
 
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
@@ -84,8 +85,8 @@ import (
 )
 
 const (
-	AccountAddressPrefix = "bc"
-	Name                 = "side"
+	// AccountAddressPrefix = "bc"
+	Name = "side"
 )
 
 var Upgrades = []upgrades.Upgrade{v1.Upgrade, v2.Upgrade}
@@ -270,6 +271,7 @@ func New(
 		wasmTypes.ModuleName,
 		gmmmoduletypes.ModuleName,
 		yieldmoduletypes.ModuleName,
+		btcbridgetypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 	app.mm.SetOrderInitGenesis(OrderInitGenesis()...)

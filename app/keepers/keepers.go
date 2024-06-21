@@ -73,6 +73,9 @@ import (
 	yieldmodulekeeper "github.com/sideprotocol/side/x/yield/keeper"
 	yieldmoduletypes "github.com/sideprotocol/side/x/yield/types"
 
+	btcbridgekeeper "github.com/sideprotocol/side/x/btcbridge/keeper"
+	btcbridgetypes "github.com/sideprotocol/side/x/btcbridge/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/sideprotocol/side/app/params"
@@ -126,9 +129,9 @@ type AppKeepers struct {
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 	scopedWasmKeeper     capabilitykeeper.ScopedKeeper
 
-	GmmKeeper gmmmodulekeeper.Keeper
-
-	YieldKeeper yieldmodulekeeper.Keeper
+	GmmKeeper       gmmmodulekeeper.Keeper
+	YieldKeeper     yieldmodulekeeper.Keeper
+	BtcBridgeKeeper btcbridgekeeper.Keeper
 
 	// keys to access the substores
 	keys    map[string]*storetypes.KVStoreKey
@@ -389,6 +392,13 @@ func (appKeepers *AppKeepers) InitNormalKeepers(
 		appKeepers.IcacallbacksKeeper,
 	)
 
+	appKeepers.BtcBridgeKeeper = *btcbridgekeeper.NewKeeper(
+		appCodec,
+		appKeepers.keys[btcbridgetypes.StoreKey],
+		appKeepers.keys[btcbridgetypes.StoreKey],
+		appKeepers.BankKeeper,
+	)
+
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
 	supportedFeatures := "iterator,staking,stargate,side,cosmwasm_1_1,cosmwasm_1_2,cosmwasm_1_4"
@@ -493,6 +503,7 @@ func KVStoreKeys() []string {
 		ibcfeetypes.StoreKey,
 		gmmmoduletypes.StoreKey,
 		yieldmoduletypes.StoreKey,
+		btcbridgetypes.StoreKey,
 	}
 }
 
